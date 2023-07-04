@@ -1476,4 +1476,3 @@ double MTB_D8t2(double e, double M, double E)
 #endif
 	return d8E;
 }
-
