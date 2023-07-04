@@ -1638,6 +1638,3 @@ __forceinline double FLM_D4TI(double e, double M, double E, double t)
 	d4E = f * d3Ed * d3Ed / (df * d3Ed * d3Ed + 0.5 * d3En * (d3Ed * ddf + d3En * dddf / 3));
 	return d4E;
 }
-
-
-

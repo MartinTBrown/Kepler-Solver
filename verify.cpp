@@ -531,5 +531,3 @@ double Verify_cbrt(double e, double M)
 	x = M - e;
 	x = abs(x); 	c = cbrt(x); return c * c * c - x;
 }
-
-

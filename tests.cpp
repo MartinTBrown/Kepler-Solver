@@ -1247,4 +1247,4 @@ void Opt_k(int n)
 	
 	}
 	printf("\n");
-}
+}

@@ -1267,4 +1267,3 @@ void QT_cbrt()
 		x = x+x;
 	}  
 }
-

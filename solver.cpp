@@ -904,6 +904,3 @@ double SolveCubic954(double c2, double c1, double c0)
 	}
 	return x;
 }
-
-
-
