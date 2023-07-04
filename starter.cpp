@@ -934,5 +934,3 @@ double D1(double e, double M)
 	//	 if (d<0.75) d = 0;
 	return e * d;
 }
-
-
