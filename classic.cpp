@@ -260,4 +260,3 @@ double MTB_S9(double e, double M)
 	s = sin(M/2);
 	return M+2*e*s*sqrt((1-s*s)/(y*y+4*e*s*s));
 }
-
