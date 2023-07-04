@@ -782,4 +782,4 @@ double MTB_BasicZ(double e, double M)
 	E = atan2(t, a);
 	//	if (abs(E)<abs(M)) E=M; // this line takes -110 cycles!
 	return E;
-}
+}
