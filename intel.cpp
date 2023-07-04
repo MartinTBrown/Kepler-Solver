@@ -49,6 +49,79 @@ double E_sinE(double E)
 	return E-sin(E);  // serious risk of numerical cancellation when E is small
 }
 
+// FLM_Fixup moved to start of file to resolve usage in non-Windows compilers
+
+double Gooding_Fixup(double e, double M, double E)
+{
+	// this code for the numerator is after Gooding 1986 & 1985 RAE papers
+	// only effective or needed when e is near 1 and M << 1.
+	// Provided for historical reasons 
+	// FLM95 Pade approximation is much faster and as accurate.
+
+	double x, xo, EE2, term, d;  // following his choice of variable names
+//	int i = 4;
+	x = M + (e - 1) * E;   //  his code here  X = M + (E-1D00)*DSIN(EE) (sic)
+	if ((e > 0) && (E != 0))
+	{
+		EE2 = -E * E;
+		term = -e * E;
+		d = 0;
+		do
+		{
+			d = d + 2;
+			term = term * EE2 / (d * d + d);
+			xo = x;
+			x = x - term;
+		} while (x != xo);
+	}
+	return x;
+}
+
+
+double MTB_Fixup(double e, double M, double E)
+{
+	// this code for the numerator is after Gooding 1986 & 1985 RAE papers
+	// only effective or needed when e is near 1 and M << 1.
+	// revised version to halves the number of divisions and make all terms negative
+	// treating consecutive pairs as a single term
+	// magnitude of terms falls so rapidly that there is no need to worry about the
+	// order of summation (I did test summing smallest to largest and no difference)
+
+	double x, xo, EE2, EE4, term, d, f, g;  // following his choice of variable names
+//	int i = 4;
+	x = M + (e - 1) * E;   //  his code here  X = M + (E-1D00)*DSIN(EE) (sic)
+	if ((e > 0) && (E != 0))
+	{
+		EE2 = E * E;
+		EE4 = EE2 * EE2;
+		term = -e * E*EE2;
+		d = 0;
+		do
+		{
+			d = d + 2;
+			f = d * d + d;
+			d = d + 2;
+			g = d * d + d;
+			term = term/(f*g);
+			xo = x;
+			x = x + term*(g-EE2);
+			term = term * EE4;
+		} while (x != xo);
+	}
+	return x;
+}
+
+double FLM_Fixup(double e, double M, double E)
+{
+	// This is the preferred method - valid only in the restricted range but as fast as evaluating M + e.sin(E)-E
+	double num, den, E2 ;
+	E2 = E * E;
+	num = 1 - E2 * (0.030956446448551138 - E2 * (4.1584640418181644e-4 - E2 * 1.7454287843856404e-6));
+	den = 6 + E2 * (0.11426132130869317 + E2 * (1.0652873476684142e-3 + E2 * (5.972761373107064e-6 + E2 * 1.7804367119519884e-8)));
+	return M - (1 - e) * E - e * E * E2 * num / den;
+
+}
+
 #ifdef _MSC_VER
 
 // Microsoft specific inline assembler hacks to get aroound lack of MSC support for long double
@@ -928,77 +1001,6 @@ double Verify_sincos_cos87(double e, double M)
 #endif
 
 
-double Gooding_Fixup(double e, double M, double E)
-{
-	// this code for the numerator is after Gooding 1986 & 1985 RAE papers
-	// only effective or needed when e is near 1 and M << 1.
-	// Provided for historical reasons 
-	// FLM95 Pade approximation is much faster and as accurate.
-
-	double x, xo, EE2, term, d;  // following his choice of variable names
-//	int i = 4;
-	x = M + (e - 1) * E;   //  his code here  X = M + (E-1D00)*DSIN(EE) (sic)
-	if ((e > 0) && (E != 0))
-	{
-		EE2 = -E * E;
-		term = -e * E;
-		d = 0;
-		do
-		{
-			d = d + 2;
-			term = term * EE2 / (d * d + d);
-			xo = x;
-			x = x - term;
-		} while (x != xo);
-	}
-	return x;
-}
-
-
-double MTB_Fixup(double e, double M, double E)
-{
-	// this code for the numerator is after Gooding 1986 & 1985 RAE papers
-	// only effective or needed when e is near 1 and M << 1.
-	// revised version to halves the number of divisions and make all terms negative
-	// treating consecutive pairs as a single term
-	// magnitude of terms falls so rapidly that there is no need to worry about the
-	// order of summation (I did test summing smallest to largest and no difference)
-
-	double x, xo, EE2, EE4, term, d, f, g;  // following his choice of variable names
-//	int i = 4;
-	x = M + (e - 1) * E;   //  his code here  X = M + (E-1D00)*DSIN(EE) (sic)
-	if ((e > 0) && (E != 0))
-	{
-		EE2 = E * E;
-		EE4 = EE2 * EE2;
-		term = -e * E*EE2;
-		d = 0;
-		do
-		{
-			d = d + 2;
-			f = d * d + d;
-			d = d + 2;
-			g = d * d + d;
-			term = term/(f*g);
-			xo = x;
-			x = x + term*(g-EE2);
-			term = term * EE4;
-		} while (x != xo);
-	}
-	return x;
-}
-
-double FLM_Fixup(double e, double M, double E)
-{
-	// This is the preferred method - valid only in the restricted range but as fast as evaluating M + e.sin(E)-E
-	double num, den, E2 ;
-	E2 = E * E;
-	num = 1 - E2 * (0.030956446448551138 - E2 * (4.1584640418181644e-4 - E2 * 1.7454287843856404e-6));
-	den = 6 + E2 * (0.11426132130869317 + E2 * (1.0652873476684142e-3 + E2 * (5.972761373107064e-6 + E2 * 1.7804367119519884e-8)));
-	return M - (1 - e) * E - e * E * E2 * num / den;
-
-}
-
 
 void Test80bit(double e, double M, double E, bool verbose)
 {
@@ -1016,5 +1018,3 @@ void Test80bit(double e, double M, double E, bool verbose)
 		M, ((result80.x.exp & b15)? "-":"+"),  result80.x.mantissa, (result80.x.exp &0x7FFF)-16384);
 #endif
 }
-
-
