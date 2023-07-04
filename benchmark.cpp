@@ -697,7 +697,7 @@ double QuickTime(double (*func)(double), const char *name)
 #if __M_IX_IX86_FP != 0  // skip this if Apple compiler for Arm
 #define VOODOO
 #endif
-#define VOODOO
+//#define VOODOO
 #endif
 
 // set one of these to match actual calling convention in use if there are compiler warnings
@@ -1107,4 +1107,3 @@ void BenchmarkAll()
 	  BenchmarkMathlib();
 	  QuickTimeAll(0.85);
 }
-
