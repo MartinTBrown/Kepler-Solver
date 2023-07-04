@@ -50,6 +50,7 @@
  #define scalb(x,y) _scalb(x,y)
  #ifdef __GNUC__
   #include <x86intrin.h>
+  #define __int64 __int64_t
  #else
   #define M1  // specific fixes for Apple C GCC/Clang compiler for M1 & Arm CPU tests
  #endif
