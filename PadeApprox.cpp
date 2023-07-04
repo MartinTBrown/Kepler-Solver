@@ -182,4 +182,3 @@ double E_tanE_Pade(double E)
 	}
 	return E * (result1 + result2 + result3);
 }
-
