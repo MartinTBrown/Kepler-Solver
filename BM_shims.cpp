@@ -971,4 +971,3 @@ double BM_FLMFixup(double e, double M)
 	E = Gooding_S1(e, M);
 	return FLM_Fixup(e, M, E);
 }
-
