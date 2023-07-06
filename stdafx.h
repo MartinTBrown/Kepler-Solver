@@ -50,7 +50,6 @@
  #define scalb(x,y) _scalb(x,y)
  #ifdef __GNUC__
   #include <x86intrin.h>
-  #define __int64 __int64_t
  #else
   #define M1  // specific fixes for Apple C GCC/Clang compiler for M1 & Arm CPU tests
  #endif
@@ -67,7 +66,8 @@
  #define __int64 __int64_t
  #define bool int
  #define __forceinline
- #define rdtsc64(x)			 // not available Intel/AMD specific hardware timer
+ #define rdtsc64(x)			 
+// not available Intel/AMD specific hardware timer
  #define rand_s(x) rand_r(x)
  #define false 0
  #define true 1
