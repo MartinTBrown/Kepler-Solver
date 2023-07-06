@@ -436,10 +436,10 @@ void Copyright()
 	printf("under certain conditions; for details see GNU GPL license. /n");
 }
 
-#ifdef M1
-int main(int argc, _TCHAR *argv[])
+#ifdef _MSC_VER
+	int __cdecl _tmain(int argc, _TCHAR *argv[])
 #else
-int __cdecl _tmain(int argc, _TCHAR *argv[])
+	int main(int argc, _TCHAR *argv[])
 #endif
  {
 	bool verbose;
