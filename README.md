@@ -3,25 +3,21 @@ Novel cubic algorithm to solve Kepler's equation for elliptical motion together 
 and some modifications to the higher order difference methods which makes them faster and more accurate.
 
 It provides sourcecode implementing methods and algorithms described in the paper: 
-"An improved approximation for Kepler's Equation" published in MNRAS 2023 by Martin T. Brown
+"An improved approximation for Kepler's Equation" published 5th July in MNRAS 2023 by Martin T. Brown
+https://doi.org/10.1093/mnras/stad2007
 Copyright 2023 Martin T. Brown
 
 =============================================
 CONSOLE APPLICATION : KeplerSolver Project Overview
 ===============================================
 
-AppWizard has created this KeplerSolver application for you.
-
-This file contains a summary of what you will find in each of the files that
-make up your KeplerSolver application. Developed on Microsoft C 2022 the code has
-been ported to Intel 2023, GCC and Apple Clang and the stdafx.h file contains a few
-shims to make each compiler happy. There are some old features needed to make an
-earlier version of the Apple compiler happy. They are left in place for now.
+Developed on Microsoft C 2022 the code has been ported to Intel 2023, GCC 13.1 and Apple Clang. 
+The stdafx.h file contains a few shims to make each compiler happy. There are some old features
+needed to make an earlier version of the Apple compiler happy. They are left in place for now.
 
 I found the Intel compiler the fastest of all (LLVM version not "Classic"). They also have
-a system cuberoot algorithm that is the best I have ever seen using fused multiply add to
-obtain accuracy in Halley refinement that is not otherwise possible in 64 bit real arithmetic.
-
+a system power algorithm that is the best I have ever seen. I recommend testing your system
+cbrt for accuracy and if necessary substitute Ref3_cbrt (default) for it.
 
 KeplerSolver.vcxproj
     This is the main project file for VC++ projects generated using an Application Wizard.
@@ -66,7 +62,7 @@ Adding an extra parameter 1 onto the command line enables verbose mode.
 
 ### Benchmark.cpp :
 	This code allows benchmarking of system libraries and functions taking one and or two 
-	double precision parameters. Timing done in system clicks and by RDTSC on Intel platforms
+	double precision parameters. Timing done in system ticks and by RDTSC on Intel platforms
 
 ### BM_shims.cpp : 
 	This interfaces refinement steps to starters so that they become functions of e,M
@@ -85,6 +81,8 @@ Adding an extra parameter 1 onto the command line enables verbose mode.
 	N_dcbrt4 is the polished version of the new algorithm it is faster and more accurate than
 	any of the other alternatives apart from MTB_Ref3 which is a very portable alternative.
 	System cbrt on some MS compilers and GCC are inaccurate and compromise the cubic solver.
+ 	NB cbrt2 is defective at present. Ref2 #3 is the most acccurate, followed by Sun #13 and
+  	my new cbrt algorithm #7 is a close third. It has potential to go faster.
 
 ### deltas.cpp
 	Contains Newton-Raphson, Halley, D4, D5, D6, D7 and D8 difference refinements for Kepler.
@@ -98,6 +96,7 @@ Adding an extra parameter 1 onto the command line enables verbose mode.
 
 ### opt_starter.cpp : 
 	Contains versions of the main algorithms with inline solver and difference refinements.
+ 	Some permuations are there for benchmaring purposes to see how longer polynomials affect speed.
 
 ### PadeApprox.cpp : 
 	Contains a range of Pade and polynomial approximations to trig functions
@@ -123,7 +122,7 @@ Adding an extra parameter 1 onto the command line enables verbose mode.
 	It also contains a random number tester which will throw biassed numbers at the algorithm 
 	focussing on the regions near 0 and 1 for e and near 0 and pi for M where things may
 	go wrong due to rounding errors. Normal mode only errors worse than the high watermark are reported. 
-	keplersolver 10005	will do a random challenge test against the reference algorithm
+	keplersolver 100005	will do a random challenge test against the reference algorithm
 
 ### verify.cpp
 	Contains sanity tests of a few routines and two more generic test frames
@@ -152,6 +151,8 @@ StdAfx.h, StdAfx.cpp
   
   There are header files for each of the sources to export functions that are
   used in other parts of the programme.
+
+  All compiler dependencies have been moved to this file (from keplersolver.h)
 
 /////////////////////////////////////////////////////////////////////////////
 Other notes:

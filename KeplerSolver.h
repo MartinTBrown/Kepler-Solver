@@ -1,7 +1,8 @@
 #include "stdafx.h"
 
 #pragma once
-
+/* 
+// compiler dependencies moved to stdafx.h
 #ifdef __GNUC
  #include <x86intrin.h>
 #else
@@ -10,7 +11,7 @@
   #include "stdio.h"
  #endif
 #endif
-
+*/
 #define _CRT_RAND_S
 #include "stdlib.h"
 #include "float.h"
