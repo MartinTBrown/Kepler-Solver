@@ -33,6 +33,7 @@
 #endif
 #endif
 
+#include <intrin.h>
 
 // this stuff is very Intel specific and isolated for that reason
 

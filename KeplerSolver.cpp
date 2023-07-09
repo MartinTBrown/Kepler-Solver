@@ -500,7 +500,7 @@ void Copyright()
 		if (argc>=2) 
 		{
 			
-  			e = _wtof(argv[1]);
+            e = atof(argv[1]);
 			i = (int)e;
 			if (argc >= 3) verbose = (argv[argc - 1][0] == '1');
 			switch (i)
@@ -536,14 +536,14 @@ void Copyright()
 			}
 			else
 			{
-              j = _wtoi(argv[argc-1]);
+              j = atoi(argv[argc-1]);
 			
 		      verbose = (j==1);
 			  if (i<NFUNCT)
 			  {
  				if (argc>=3) // two parameters e, M
 			    {		
-					M = _wtof(argv[2]);
+                    M = atof(argv[2]);
 					j = (int)M;
 					if (i == NVER + 1) SetVerifyFun1(j);
 					if (argc==3)
@@ -553,7 +553,7 @@ void Copyright()
 					}
 			    else
 					{
-						k = CheckParam(_wtoi(argv[3]));
+                        k = CheckParam(atoi(argv[3]));
 						if (i == NVER)
 						{
 							SetVerifyFun2(j);
@@ -562,7 +562,7 @@ void Copyright()
 						}
 						if (argc>=5) // three parameters VerAll, Nfun1 Nfun2
 						{
-							j = CheckParam(_wtoi(argv[4]));
+                            j = CheckParam(atoi(argv[4]));
 							if (j) MasterTest(j, e, M, true, verbose);
 							else DoCoreTests(i, -1, verbose);
 						}
@@ -573,7 +573,7 @@ void Copyright()
 							{
 							for (i = 1; i< argc-1;  i++)
 							{
-							 j = CheckParam(_wtoi(argv[i+1]));
+                             j = CheckParam(atoi(argv[i+1]));
 							 if (j) FullTest(j, verbose);
 							}
 						}
@@ -584,7 +584,7 @@ void Copyright()
 			  else
 			  {
 				  SetVerifyFlag(i>0);
-				  j = _wtoi(argv[2]);
+                  j = atoi(argv[2]);
 				  if (argc == 3)
 				  {
 					if (i == NFUNCT + 10) TabulateFunction(j, 100, 100, 1);
@@ -597,7 +597,7 @@ void Copyright()
 				  }
 				  if (argc>=4) 
 				  {
-					  k = _wtoi(argv[3]);
+                      k = atoi(argv[3]);
 					  printf("%i %s :  ", i, GetName(i));
 
 					  if (i == NVER)
