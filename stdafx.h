@@ -44,9 +44,6 @@
  #define __uint64_t unsigned __int64    // since Apple compiler hates this construct but accepts the former
 #else
  // common dislikes of non-Microsoft compilers
- #define _wtof(s) atof(s)
- #define _wtoi(s) atoi(s)
- #define _TCHAR char
  #define scalb(x,y) _scalb(x,y)
  #ifdef __GNUC__
   #include <x86intrin.h>
@@ -73,7 +70,6 @@
  #define true 1
  #define strcpy_s(a,b) strcpy(a,b)
  const unsigned int UINT_MAX = 0xffffffff;
- //#define _TCHAR char
 #else
  #define __uint64_t unsigned __int64    // since Apple compiler hates this construct but accepts the former
 #endif
