@@ -70,7 +70,7 @@ const double test_M[NM] = {0.0, 1e-150, 1e-99, 1e-30, 1e-26,1e-24, 5e-24,8e-24, 
 void Init(int n, double (*fun)(double,double), const char* str)
 {
 	test[n] = fun;
-    name[n] = str;
+        name[n] = str;
 }
 
 

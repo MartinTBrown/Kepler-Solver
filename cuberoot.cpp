@@ -46,6 +46,8 @@
 //	Github sources available at https://github.com/MartinTBrown/Kepler-Solver
 //	Author contact details: martink@nonad.co.uk
 
+#include <math.h>
+#include <stdint.h>
 
 #include "stdafx.h"
 #include "cuberoot.h"
@@ -1095,8 +1097,8 @@ double gnu_cbrt(double x)
   * Return cube root of x
   */
 
-#include <math.h>
-#include <stdint.h>
+//#include <math.h>
+//#include <stdint.h>
 
 //static const uint32_t
 //B1 = 715094163, /* B1 = (1023-1023/3-0.03306235651)*2**20 */
