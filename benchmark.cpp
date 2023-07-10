@@ -684,7 +684,7 @@ double QuickTime(double (*func)(double), const char *name)
 #ifdef M1
       printf(" %5.3f", (double)end_t/CLOCKS_PER_SEC);
 #else
-      printf("%6I64i %5.3f", end, (double)end_t/CLOCKS_PER_SEC);
+      printf("%6" PRId64 " %5.3f", end, (double)end_t/CLOCKS_PER_SEC);
 #endif
 	}
 	return E;
@@ -780,7 +780,7 @@ double vQuickTime(double  (_vectorcall *func)(double), const char* name)
 #ifdef M1
 		printf(" %5.3f", (double)end_t / CLOCKS_PER_SEC);
 #else
-		printf("%6I64i %5.3f", end, (double)end_t / CLOCKS_PER_SEC);
+                printf("%6" PRId64 " %5.3f", end, (double)end_t / CLOCKS_PER_SEC);
 #endif
 	}
 	return E;
@@ -868,7 +868,7 @@ int QuickTimeFun(int i, double e, bool verbose)
 #ifdef M1
                 printf(" %5.3f", (double)end_t / CLOCKS_PER_SEC);
 #else
-                printf("%6I64i %5.3f", end, (double)end_t / CLOCKS_PER_SEC);
+                printf("%6" PRId64 " %5.3f", end, (double)end_t / CLOCKS_PER_SEC);
 #endif
 			if (sig == 0)
 				sig = y;
@@ -931,7 +931,7 @@ void QuickTimeFun3(double (*test)(double, double, double), double e)
 #ifdef M1
 			printf(" %5.3f", (double)end_t / CLOCKS_PER_SEC);
 #else
-			printf("%6I64i %5.3f", end, (double)end_t / CLOCKS_PER_SEC);
+                        printf("%6" PRId64 " %5.3f", end, (double)end_t / CLOCKS_PER_SEC);
 #endif
 		if (sig == 0)
 			sig = y;

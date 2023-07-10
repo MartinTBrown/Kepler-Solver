@@ -33,6 +33,7 @@
 #include "time.h"
 #include <stdint.h>
 #include <limits.h>
+#include <inttypes.h>
 
 //  #define __int64 int // used for large counter in random testing (can be very slow!)
 

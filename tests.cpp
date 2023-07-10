@@ -199,7 +199,7 @@ void QuickTimeAll(double e, int n)
 #ifdef M1
             printf(" %5.3f", (double)end_t/CLOCKS_PER_SEC);
 #else
-            printf("%6I64i %5.3f", end, (double)end_t/CLOCKS_PER_SEC);
+            printf("%6" PRId64 " %5.3f", end, (double)end_t/CLOCKS_PER_SEC);
 #endif
 	  }
 	  }
