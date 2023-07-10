@@ -35,7 +35,7 @@ void ErrorSummary(bool verbose);
 
 double MTB_Rand();
 
-void RandomTest(int n, __int64  repeats, bool verbose);
+void RandomTest(int n, int64_t  repeats, bool verbose);
 
 void RandomTestAll(int n);
 

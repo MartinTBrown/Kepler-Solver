@@ -35,8 +35,8 @@
 
 // this stuff is very Intel specific and isolated for that reason
 
-struct tempreal80 { __uint64_t mantissa; unsigned short exp; }; 
-union  mydouble { double x; __uint64_t i64; } result;
+struct tempreal80 { int64_t mantissa; unsigned short exp; };
+union  mydouble { double x; int64_t i64; } result;
 
 union  mydouble80 { long double x80; M1struct tempreal80 x; short int i[5];} result80;
 
@@ -874,7 +874,7 @@ double fptan87(double x)
 #else
 // untested not Microsoft C implementation
 
-__int64 rdtsc64(__int64 &t)
+int64_t rdtsc64(int64_t &t)
 {
 //	_mm_lfence();
 	t= __rdtsc();
@@ -1008,7 +1008,7 @@ double Verify_sincos_cos87(double e, double M)
 
 void Test80bit(double e, double M, double E, bool verbose)
 {
-	const __uint64_t b63 = 0x8000000000000000;
+        const int64_t b63 = 0x8000000000000000;
 	const unsigned short b15 = 0x8000;
 	
 	if (verbose) printf(" f = M + e.sin(E) evaluated where e = %6.5f  M= %6.5f  E=%6.5f\n", e, M, E);

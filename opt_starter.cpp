@@ -1470,7 +1470,7 @@ double D5_FLM_Opt(double e, double M)
 
 
 
-__forceinline double SolveCubicInline(double a, double b, double c)
+inline double SolveCubicInline(double a, double b, double c)
 {
 	// this version follows the same classic algebra as in Appendix A
 	// solves a cubic of the form x^3 + a.x^2 + b.x + c = 0
@@ -1519,7 +1519,7 @@ __forceinline double SolveCubicInline(double a, double b, double c)
 
 
 
-__forceinline double SolveCubicInline_Opt(double a, double b, double c)
+inline double SolveCubicInline_Opt(double a, double b, double c)
 // this one takes prescaled a/3, b/3 c/2 inputs for optimum speed
 // it should inline automagically too at least on MS compiler
 {
@@ -1557,7 +1557,7 @@ __forceinline double SolveCubicInline_Opt(double a, double b, double c)
 	return t;
 }
 
-__forceinline double D3TI(double e, double M, double E, double t)
+inline double D3TI(double e, double M, double E, double t)
 {
 	double r, rc, t2;
 	t2 = t * t;
@@ -1574,7 +1574,7 @@ __forceinline double D3TI(double e, double M, double E, double t)
 
 #define TFORM
 
-__forceinline double FLM_D4TI(double e, double M, double E, double t)
+inline double FLM_D4TI(double e, double M, double E, double t)
 {
 	// last order where tangent form is acceptable ?
 

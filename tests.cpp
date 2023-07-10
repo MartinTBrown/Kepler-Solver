@@ -165,7 +165,7 @@ const char *GetName(int n)
 void QuickTimeAll(double e, int n)
 {
 	double dM, E, M;
-	__int64 start, end;
+        int64_t start, end;
 	volatile time_t  start_t, end_t;
 	int i, j, k;
 	double (*func)(double, double);
@@ -524,7 +524,7 @@ double MTB_Rand()
 }
 
 
-void RandomTest(int n, __int64  repeats, bool verbose)
+void RandomTest(int n, int64_t  repeats, bool verbose)
 {
 	// this should only be used for tests to probe for irregularities
 	// disable for regression testing!
@@ -536,7 +536,7 @@ void RandomTest(int n, __int64  repeats, bool verbose)
 	unsigned int hist[BINHI];
 
 #ifdef use_int64
-	__int64 i;
+        __int64 i;
 #else
 	int i;
 #endif

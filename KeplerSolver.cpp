@@ -424,7 +424,7 @@ void DoCoreTests(int i, double e, bool verbose)
 			if (i < NVER) QuickTimeFun(i, 0.85);
 		}
 		else
-			RandomTest(i, 10000 * (__int64)GetN(), verbose);
+                        RandomTest(i, 10000 * (int64_t)GetN(), verbose);
 	}
 }
 

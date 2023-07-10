@@ -49,10 +49,10 @@ double MTB_BestI(double e_in, double M);
 double MTB_Best2tp54Opt(double e, double M);
 
 
-__forceinline double SolveCubicInline(double a, double b, double c);
+inline double SolveCubicInline(double a, double b, double c);
 
-__forceinline double SolveCubicInline_Opt(double a, double b, double c);
+inline double SolveCubicInline_Opt(double a, double b, double c);
 
-__forceinline double D3TI(double e, double M, double E, double t);
+inline double D3TI(double e, double M, double E, double t);
 
-__forceinline double FLM_D4TI(double e, double M, double E, double t);
+inline double FLM_D4TI(double e, double M, double E, double t);

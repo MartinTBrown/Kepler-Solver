@@ -305,7 +305,7 @@ double QT_i64mul(__int64 *end, time_t *end_t)
 {
 
 	double dM, M;
-	__int64 E, F;
+        __int64 E, F;
 	time_t  start_t;
 	int k;
 	M = 1.0;
@@ -330,11 +330,11 @@ double QT_i64mul(__int64 *end, time_t *end_t)
 #else
 
 
-double QT_nop(__int64 &end, time_t &end_t)
+double QT_nop(int64_t &end, time_t &end_t)
 {
 
 	double dM, E, F, M;
-	__int64 start;
+        int64_t start;
 	time_t  start_t;
 	int k;
 	M = 0.0;
@@ -362,11 +362,11 @@ double QT_nop(__int64 &end, time_t &end_t)
 #endif
 }
 
-double QT_plus(__int64 &end, time_t &end_t)
+double QT_plus(int64_t &end, time_t &end_t)
 {
 
 	double dM, E, F, M;
-	__int64 start;
+        int64_t start;
 	time_t  start_t;
 	int k;
 	M = 0.0;
@@ -393,11 +393,11 @@ double QT_plus(__int64 &end, time_t &end_t)
 #endif
 }
 
-double QT_sub(__int64 &end, time_t &end_t)
+double QT_sub(int64_t &end, time_t &end_t)
 {
 
 	double dM, E, F, M;
-	__int64 start;
+        int64_t start;
 	time_t  start_t;
 	int k;
 	M = 0.0;
@@ -424,11 +424,11 @@ double QT_sub(__int64 &end, time_t &end_t)
 #endif
 }
 
-double QT_div(__int64 &end, time_t &end_t)
+double QT_div(int64_t &end, time_t &end_t)
 {
 
 	double dM, E, F, M;
-	__int64 start;
+        int64_t start;
 	time_t  start_t;
 	int i,j, k;
 	M = 0.985;
@@ -456,10 +456,10 @@ double QT_div(__int64 &end, time_t &end_t)
 	return E+j;
 }
 
-double QT_fdiv(__int64 &end, time_t &end_t)
+double QT_fdiv(int64_t &end, time_t &end_t)
 {
 	float dM, E, F, M;
-	__int64 start;
+        int64_t start;
 	time_t  start_t;
 	int i,j, k;
 	M = (float) 0.985;
@@ -487,10 +487,10 @@ double QT_fdiv(__int64 &end, time_t &end_t)
 	return (double) E+j;
 }
 
-double QT_i64div(__int64 &end, time_t &end_t)
+double QT_i64div(int64_t &end, time_t &end_t)
 {
-	__int64 E, F;
-	__int64 start;
+        int64_t E, F;
+        int64_t start;
 	time_t  start_t;
 	int i,j, k;
 	j = 0;
@@ -514,10 +514,10 @@ double QT_i64div(__int64 &end, time_t &end_t)
 	return (double) E+j;
 }
 
-double QT_idiv(__int64 &end, time_t &end_t)
+double QT_idiv(int64_t &end, time_t &end_t)
 {
 	int E, F;
-	__int64 start;
+        int64_t start;
 	time_t  start_t;
 	int i,j, k;
 	j = 0;
@@ -541,11 +541,11 @@ double QT_idiv(__int64 &end, time_t &end_t)
 	return (double) E+j;
 }
 
-double QT_mul(__int64 &end, time_t &end_t)
+double QT_mul(int64_t &end, time_t &end_t)
 {
 
 	double dM, E, F, M;
-	__int64 start;
+        int64_t start;
 	time_t  start_t;
 	int k;
 	M = 1.0;
@@ -569,12 +569,12 @@ double QT_mul(__int64 &end, time_t &end_t)
 	return E; // to defeat aggressive global optimisers you may need to printf the return value
 }
 
-double QT_imul(__int64 &end, time_t &end_t)
+double QT_imul(int64_t &end, time_t &end_t)
 {
 
 	double dM, M;
 	int E, F;
-	__int64 start;
+        int64_t start;
 	time_t  start_t;
 	int k;
 	M = 1.0;
@@ -599,10 +599,10 @@ double QT_imul(__int64 &end, time_t &end_t)
 	return E; // to defeat aggressive global optimisers you may need to printf the return value
 }
 
-double QT_i64mul(__int64 &end, time_t &end_t)
+double QT_i64mul(int64_t &end, time_t &end_t)
 {
-	__int64 E, F;
-	__int64 start;
+        int64_t E, F;
+        int64_t start;
 	time_t  start_t;
 	int k;
 	E = F = 1;
@@ -611,7 +611,7 @@ double QT_i64mul(__int64 &end, time_t &end_t)
 	rdtsc64(start);
 	for (k=0; k<MDIV; k++)
 	{
-	   E += (__int64) k* (__int64) k;  // some saturation - faster IRL
+           E += (int64_t) k* (int64_t) k;  // some saturation - faster IRL
 	}
 	rdtsc64(end);
 	end = end-start;
@@ -623,7 +623,7 @@ double QT_i64mul(__int64 &end, time_t &end_t)
 double QuickTime(double (*func)(double), const char *name)
 {
 	double dM, E, M;
-	__int64 start, end;
+        int64_t start, end;
 	time_t  start_t, end_t;
 	int j, k;
 	end = end_t = 0; // to stop compiler warning;
@@ -808,7 +808,7 @@ int TimeFun(int i, double e)
 {
 	double dM, M, y;
 	double (*fun)(double, double);
-	__int64 start, end;
+        int64_t start, end;
 	int k, fails = 0;
 	M = 0; // some routines don't like 0.0
 	dM = (pi - M) / MDIV;
@@ -829,7 +829,7 @@ int QuickTimeFun(int i, double e, bool verbose)
 {
 	double dM, M, sig, y;
 	double (*fun)(double, double);
-	__int64 start, end;
+        int64_t start, end;
 	volatile time_t  start_t, end_t;
 	int j, k, fails = 0;
 	M = 1.0e-10; // some routines don't like 0.0
@@ -894,7 +894,7 @@ void QuickTimeFun3(double (*test)(double, double, double), double e)
 	// unclear why it is so bad code looks OK in debugger but runs very slowly
 
 	double dM, E, M, y, sig;
-	__int64 start, end;
+        int64_t start, end;
 	volatile time_t  start_t, end_t;
 	int i = 1, j, k, fails;
 	M = 1.0e-10; // some routines don't like 0.0
@@ -998,7 +998,9 @@ void BenchmarkMathlib()
 	QuickTime(fabs, "abs");
 #ifndef M1	
 	QuickTime(MTB_chgsgn, "fchsgn");
+#ifdef _MSC_VER
 	QuickTime(_chgsign, "chgsign");
+#endif
 #else
 	printf("\nchgsgn");
 	printf("\n_chgsgn");

@@ -31,6 +31,8 @@
 #include "math.h"
 #include "string.h"
 #include "time.h"
+#include <stdint.h>
+#include <limits.h>
 
 //  #define __int64 int // used for large counter in random testing (can be very slow!)
 
@@ -71,7 +73,9 @@
  #define strcpy_s(a,b) strcpy(a,b)
  const unsigned int UINT_MAX = 0xffffffff;
 #else
- #define __uint64_t unsigned __int64    // since Apple compiler hates this construct but accepts the former
+#ifndef _MSC_VER
+ #define rand_s(x) rand_r(x)
+#endif
 #endif
 
 // if you have to make changes or add macros for other OS or platforms please put them here

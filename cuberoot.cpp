@@ -314,7 +314,7 @@ double Ref_cbrt3(double x)
 
 
 union  myreal32 { float f32; int i32; unsigned int ui32; short s[2]; unsigned short us[2];};
-union  myreal64 { double f64; float f32[2]; __int64 i64; int i32[2]; unsigned short us[4]; short s[4]; };
+union  myreal64 { double f64; float f32[2]; int64_t i64; int i32[2]; unsigned short us[4]; short s[4]; };
 
 
 short rt3[256], rt3idx[256];
@@ -427,7 +427,7 @@ double N_cbrt(double x)
     exp = exp >> 7;
 	exp = exp%3;
 	man = y.ui32 & 0x007ffffc;
-	temp.i64 = (__int64) man * 0x55555555;
+        temp.i64 = (int64_t) man * 0x55555555;
 
 #ifdef _DEBUG
 	temp.i32[0]  = temp.i32[1] | 0x3f800000;
@@ -476,7 +476,7 @@ double N_rcbrt(double x)
 	exp = exp >> 7;
 	exp = exp % 3;
 	man = y.ui32 & 0x007ffffc;
-	temp.i64 = (__int64)man * 0x55555555;
+        temp.i64 = (int64_t)man * 0x55555555;
 
 #ifdef _DEBUG
 	temp.i32[0] = temp.i32[1] | 0x3f800000;
@@ -746,7 +746,7 @@ double N_dcbrt4(double x)
 
 	M1struct myreal64 y;
 	double s, t, z;
-	__int64 man, nexp;
+        int64_t man, nexp;
 #ifdef _DEBUG
 	M1union myreal64 target;
 	target.f64 = pow(x, (1.0 / 3));
@@ -804,7 +804,7 @@ double N_dcbrt4_32(double x)
 	y.f64 = x;
 	man = y.i32[1] - 0x3ff00000;
 	//y.i32[1] = man / 3;
-	y.i64 = (__int64)man * 0x55555555;
+        y.i64 = (int64_t)man * 0x55555555;
 	nexp = y.i32[1] & 0xfff00000;
 	man = (man - 3 * nexp) & 0xfff00000; 
 	y.i32[1] = (y.i32[1] & 0x3fffffff) | 0x3ff00000;
@@ -842,7 +842,7 @@ double N_rdcbrtNR(double x)
 	// scope to tidy up exp & nexp to avoid exp % 3 but disappointing performance
 	M1struct myreal64 y;
 	double s, t, z;
-	__int64 man, nexp;
+        int64_t man, nexp;
 #ifdef _DEBUG
 	M1union myreal64 target;
 	target.f64 = pow(x, (1.0 / 3));

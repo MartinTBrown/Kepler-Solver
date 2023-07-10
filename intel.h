@@ -54,7 +54,7 @@ void rdtsc64(__int64 &t) ;
 #else
 
 #ifndef M1
-	__int64 rdtsc64(__int64 &t);
+        int64_t rdtsc64(int64_t &t);
 #endif
 
 #endif
