@@ -101,7 +101,7 @@ void ShowHelp()
 	printf(" KeplerSolver N      where N<%i will invoke the following functions:\n", NFUNCT+NSPECIAL-1);
 	for (i=0; i<NFUNCT; i+=1)
 	{
-		if (name[i][1]) printf("%4i : %-9s\t", i, name[i]);
+        if (name[i]) printf("%4i : %-9s\t", i, name[i]);
 		if (i % 5 == 0) printf("\n");
 	}
 //		if (name[i][0]) printf("\t%2i : %s\t%2i : %s\n", i, name[i], i+1, name[i+1]);
@@ -175,7 +175,7 @@ void QuickTimeAll(double e, int n)
     for (i=0; i<n; i++)
 	{
 		func = test[i];
-	    if (name[i][1]) // ignore unused entries in table
+        if (name[i]) // ignore unused entries in table
 		{
 			func = test[i];
 			for (j=0; j<6; j++)
@@ -547,7 +547,7 @@ void RandomTest(int n, __int64  repeats, bool verbose)
 	s = 0;
 	binsize = pow(2.0, -54.0)*2; // *2.0; // was 0.0625; //was  *2.0;
 	binbase = BINS * binsize + binsize / 2;
-	if (name[n][1] != 0)
+    if (name[n])
 	{
 		for (j = 0; j < BINHI; j++) hist[j] = 0;
 #ifdef M1
@@ -717,7 +717,7 @@ void QuickTest(int n, double e)
   	    for (i=0; i<NM; i++)
 			printf("%17.15f ", qtest_M[i]);
 	}
-	if (name[n][0] != '_')
+    if (name[n][0] != '_')
 	{
 	  printf("\n%-12s ", name[n]);
 	  for (i=0; i<NM; i++)
