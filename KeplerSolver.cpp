@@ -433,15 +433,11 @@ void Copyright()
 	printf("KeplerSolver  Copyright (C) 2023  Martin T, Brown\n");
 	printf("This program comes with ABSOLUTELY NO WARRANTY; for details see license.\n");
 	printf("This is free software, and you are welcome to redistribute it\n");
-	printf("under certain conditions; for details see GNU GPL license. /n");
+    printf("under certain conditions; for details see GNU GPL license. \n");
 }
 
-#ifdef _MSC_VER
-	int __cdecl _tmain(int argc, _TCHAR *argv[])
-#else
-	int main(int argc, _TCHAR *argv[])
-#endif
- {
+int main(int argc, char *argv[])
+{
 	bool verbose;
 	int i, j, k;
 	double M, e;

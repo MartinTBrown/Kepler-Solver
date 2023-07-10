@@ -33,8 +33,6 @@
 #endif
 #endif
 
-#include <intrin.h>
-
 // this stuff is very Intel specific and isolated for that reason
 
 struct tempreal80 { __uint64_t mantissa; unsigned short exp; }; 

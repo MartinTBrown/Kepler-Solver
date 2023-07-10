@@ -6,7 +6,7 @@ int const NVER = 200;   // start of verify functions
 
 void ShowHelp();
 
-char *GetName(int i);
+const char *GetName(int i);
 
 double (*GetTest(int i))(double,double);
 

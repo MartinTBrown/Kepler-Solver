@@ -631,8 +631,8 @@ double QuickTime(double (*func)(double), const char *name)
 	dM = (pi-M)/(MDIV-1);
 #ifdef _MSC_VER
 	if (func == tan87) dM = dM/4; // valid range 0 - +pi/4
-#endif     
-	printf("\nQT %10s %1X", name, 0); // (((int) func) & 0xFF)>>4);
+#endif
+    printf("\nQT %10s %1X", name, 0); // (((int) func) & 0xFF)>>4);
 	for (j = 0; j < 5; j++)
 	{
 		if (name[1]==0)     // single character for primitive operations
@@ -682,9 +682,9 @@ double QuickTime(double (*func)(double), const char *name)
 	 
 	  end = (end + MDIV/2)/MDIV;
 #ifdef M1
-	    printf(" %5.3f", (double)end_t/CLOCKS_PER_SEC);
+      printf(" %5.3f", (double)end_t/CLOCKS_PER_SEC);
 #else
-	  printf("%6I64i %5.3f", end, (double)end_t/CLOCKS_PER_SEC);
+      printf("%6I64i %5.3f", end, (double)end_t/CLOCKS_PER_SEC);
 #endif
 	}
 	return E;
@@ -862,13 +862,13 @@ int QuickTimeFun(int i, double e, bool verbose)
 			end_t = clock() - start_t;
 			end = (end - start + MDIV / 2) / MDIV;
 
-			//			end = TimeFun(i, e);
-			if (!j)  printf("\n%-2i %10s %1X ", i, GetName(i), (((int)fun) & 0xff) >> 4);
+            //			end = TimeFun(i, e);
+            if (!j)  printf("\n%-2i %10s %1X ", i, GetName(i), (int)(((intptr_t)fun) & 0xff) >> 4);
 			else
 #ifdef M1
-				printf(" %5.3f", (double)end_t / CLOCKS_PER_SEC);
+                printf(" %5.3f", (double)end_t / CLOCKS_PER_SEC);
 #else
-				printf("%6I64i %5.3f", end, (double)end_t / CLOCKS_PER_SEC);
+                printf("%6I64i %5.3f", end, (double)end_t / CLOCKS_PER_SEC);
 #endif
 			if (sig == 0)
 				sig = y;
@@ -926,7 +926,7 @@ void QuickTimeFun3(double (*test)(double, double, double), double e)
 		end_t = clock() - start_t;
 		end = (end - start + MDIV / 2) / MDIV;
 
-		if (!j)  printf("\n%-2i %10s %1X ", i, (char *) GetName(i), (((int)test) & 0xff) >> 4);
+        if (!j)  printf("\n%-2i %10s %1X ", i, (char *) GetName(i), (int)(((intptr_t)test) & 0xff) >> 4);
 		else
 #ifdef M1
 			printf(" %5.3f", (double)end_t / CLOCKS_PER_SEC);
@@ -963,12 +963,12 @@ void QuickTimeSolver(int n, double e)
 void QuickTimeAll(double e)
 {
 	int i;
-	char* name;
+    const char* name;
 	printf("\nQuick Time e = %14.5g\n", e);
 	for (i = 0; i < NVER; i++)
 	{
-		name = GetName(i);
-		if (name[1]) // ignore unused entries in table
+        name = GetName(i);
+        if (strlen(name) > 0) // ignore unused entries in table
 		{
 			QuickTimeFun(i, e, true);
 		}

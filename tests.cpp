@@ -42,7 +42,7 @@ int N; // global parameter used for Pow_En and D to pass extra hidden parameter;
 
 
 double (*test[NFUNCT])(double,double);
-char name[NFUNCT][12];
+const char *name[NFUNCT];
 
 // double (*refine[100])(double, double, double); // not presently used call with 3 params isn't any good for benchmarking
 // char refine_name[100][12];
@@ -70,7 +70,7 @@ const double test_M[NM] = {0.0, 1e-150, 1e-99, 1e-30, 1e-26,1e-24, 5e-24,8e-24, 
 void Init(int n, double (*fun)(double,double), const char* str)
 {
 	test[n] = fun;
-	strcpy_s(name[n], str);
+    name[n] = str;
 }
 
 
@@ -91,7 +91,7 @@ void ShowHelp()
 	printf(" KeplerSolver e M will invoke basic routine and show errors and NR/Halley\n");
 	printf(" KeplerSolver e M N  will invoke the Nth routine and show errors and NR/Halley\n");
 	printf(" N = 1 Basic (default), N = 2 Better, N = 3 Best, N = 4 Optimised Basic\n\n");
-	printf(" -1 < e <= 1 where if e is negative it is interpretted as the value of 'e-1' ");
+    printf(" -1 < e <= 1 where if e is negative it is interpreted as the value of 'e-1' \n");
 	printf(" if e==9  then compute a slice at constant M for all e values\n");
 	printf(" if M==9 then compute a slice at constant e for all M values\n");
 	printf(" add 10 to the M value to set it as a target E value\n");
@@ -157,7 +157,7 @@ double Pow_eN(double e, double M)
 	return a*pow(e, N);
 }
 
-char *GetName(int n)
+const char *GetName(int n)
 {
 	return name[n];
 }
@@ -193,13 +193,13 @@ void QuickTimeAll(double e, int n)
 		}
 		rdtsc64(end);
 		end_t = clock()-start_t;
-		end = (end-start+MDIV/2)/MDIV;
-		if (!j)  printf("\n%-2i %10s %1X ", i, name[i], (((int)func) & 0xff) >> 4);
+        end = (end-start+MDIV/2)/MDIV;
+        if (!j)  printf("\n%-2i %10s %1X ", i, name[i], (int)(((intptr_t)func) & 0xff) >> 4);
 	  else
 #ifdef M1
-		  printf(" %5.3f", (double)end_t/CLOCKS_PER_SEC);
+            printf(" %5.3f", (double)end_t/CLOCKS_PER_SEC);
 #else
-		  printf("%6I64i %5.3f", end, (double)end_t/CLOCKS_PER_SEC);
+            printf("%6I64i %5.3f", end, (double)end_t/CLOCKS_PER_SEC);
 #endif
 	  }
 	  }
