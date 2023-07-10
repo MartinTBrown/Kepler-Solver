@@ -123,6 +123,11 @@ double FLM_Fixup(double e, double M, double E)
 
 #ifdef _MSC_VER
 
+#ifdef _M_IX86
+#else
+#include <intrin.h>
+#endif
+
 // Microsoft specific inline assembler hacks to get aroound lack of MSC support for long double
 // to obtain a better reference we force 80 bit floating point computation on the x87 stack
 // this code will only work properly with some compiler options. Requires fp /fast
