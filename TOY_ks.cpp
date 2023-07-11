@@ -2,7 +2,8 @@
 #include "float.h"
 #define _USE_MATH_DEFINES // for C
 #include "math.h"
-#include "intrin.h"
+#include <immintrin.h>
+#include <stdint.h>
 
 #pragma intrinsic(__rdtsc)
 
@@ -274,7 +275,7 @@ int TimeFun(double (*fun)(double, double), double e)
 {
 	const int MDIV = 10000000;
 	double dM, M, y;
-	__int64 start, end;
+        int64_t start, end;
 	int k, fails = 0;
 	M = 0; // some routines don't like 0.0
 	dM = (pi - M) / MDIV;
@@ -296,12 +297,13 @@ int TimeFun(double (*fun)(double, double), double e)
 void DoTest(const char* name, double (*func)(double, double), double e, double M)
 {
 	int i;
-//	printf("\n%-8s ( %g, %g ) = %20.14g  t = %i", name, e, M, (*func)(e, M), TimeFun(*func, 0.85));
+//	printf("%-8s ( %g, %g ) = %20.14g  t = %i\n", name, e, M, (*func)(e, M), TimeFun(*func, 0.85));
 #ifdef SLOW
-	printf("\n%-8s ( %g, %g ) = %20.14g  t = ", name, e, M, (*func)(e, M));
+        printf("%-8s ( %g, %g ) = %20.14g  t = ", name, e, M, (*func)(e, M));
 	for (i = 0; i < 6; i++) printf("\t%i", TimeFun(*func, 0.85));
+        printf("\n");
 #else
-	printf("\n%-8s ( %g, %g ) = %18.11g  t = %i", name, e, M, (*func)(e, M), TimeFun(*func, 0.85));
+        printf("%-8s ( %g, %g ) = %18.11g  t = %i\n", name, e, M, (*func)(e, M), TimeFun(*func, 0.85));
 #endif
 }
 
