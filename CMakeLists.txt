@@ -48,3 +48,5 @@ install(TARGETS Kepler-Solver
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+
+add_executable(toy TOY_ks.cpp)
