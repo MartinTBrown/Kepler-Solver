@@ -46,7 +46,7 @@ double BM_qsincos(double x)
 // Apple M1 complier Clang (old version) won't allow &variable notation for modifiable values
 // changed to *end and *end_t accordingly
 
-double QT_nop(__int64 *end, time_t *end_t)
+double QT_nop(int64_t *end, time_t *end_t)
 {
 
 	double dM, E, F, M;
@@ -74,7 +74,7 @@ double QT_nop(__int64 *end, time_t *end_t)
 #endif
 }
 
-double QT_plus(__int64 *end, time_t *end_t)
+double QT_plus(int64_t *end, time_t *end_t)
 {
 
 	double dM, E, F, M;
@@ -102,7 +102,7 @@ double QT_plus(__int64 *end, time_t *end_t)
 #endif
 }
 
-double QT_sub(__int64 *end, time_t *end_t)
+double QT_sub(int64_t *end, time_t *end_t)
 {
 
 	double dM, E, F, M;
@@ -130,7 +130,7 @@ double QT_sub(__int64 *end, time_t *end_t)
 #endif
 }
 
-double QT_div(__int64 *end, time_t *end_t)
+double QT_div(int64_t *end, time_t *end_t)
 {
 
 	double dM, E, F, M;
@@ -159,7 +159,7 @@ double QT_div(__int64 *end, time_t *end_t)
 	return E+j;
 }
 
-double QT_fdiv(__int64 *end, time_t *end_t)
+double QT_fdiv(int64_t *end, time_t *end_t)
 {
 
 	float dM, E, F, M;
@@ -188,11 +188,11 @@ double QT_fdiv(__int64 *end, time_t *end_t)
 	return (double) E+j;
 }
 
-double QT_i64div(__int64 *end, time_t *end_t)
+double QT_i64div(int64_t *end, time_t *end_t)
 {
 
 	float dM, M;
-	__int64 E, F;
+    int64_t E, F;
 	time_t  start_t;
 	int i,j, k;
 	M = (float) 0.985;
@@ -218,7 +218,7 @@ double QT_i64div(__int64 *end, time_t *end_t)
 	return (double) E+j;
 }
 
-double QT_idiv(__int64 *end, time_t *end_t)
+double QT_idiv(int64_t *end, time_t *end_t)
 {
 
 	float dM, M;
@@ -248,7 +248,7 @@ double QT_idiv(__int64 *end, time_t *end_t)
 	return (double) E+j;
 }
 
-double QT_mul(__int64 *end, time_t *end_t)
+double QT_mul(int64_t *end, time_t *end_t)
 {
 
 	double dM, E, F, M;
@@ -274,7 +274,7 @@ double QT_mul(__int64 *end, time_t *end_t)
 	return E; // to defeat aggressive global optimisers you may need to printf the return value
 }
 
-double QT_imul(__int64 *end, time_t *end_t)
+double QT_imul(int64_t *end, time_t *end_t)
 {
 
 	double dM, M;
@@ -301,11 +301,11 @@ double QT_imul(__int64 *end, time_t *end_t)
 	return E; // to defeat aggressive global optimisers you may need to printf the return value
 }
 
-double QT_i64mul(__int64 *end, time_t *end_t)
+double QT_i64mul(int64_t *end, time_t *end_t)
 {
 
-	double dM, M;
-        __int64 E, F;
+    double dM, M;
+    int64_t E, F;
 	time_t  start_t;
 	int k;
 	M = 1.0;
@@ -317,7 +317,7 @@ double QT_i64mul(__int64 *end, time_t *end_t)
 	for (k=0; k<MDIV; k++)
 	{
 #ifdef PURE
-	   E += (__int64) k* (__int64) k;  // some saturation - faster IRL
+       E += (int64_t) k* (int64_t) k;  // some saturation - faster IRL
 #else
 		E += k*k; // forces pipeline stall result is never ready in time
 #endif

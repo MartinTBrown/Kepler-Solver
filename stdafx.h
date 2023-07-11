@@ -34,6 +34,7 @@
 #include <stdint.h>
 #include <limits.h>
 #include <inttypes.h>
+#include <stdbool.h>
 
 //  #define __int64 int // used for large counter in random testing (can be very slow!)
 
@@ -60,19 +61,10 @@
 #ifdef __APPLE__
  // Apple specific fixes to match Clang - some old features commented out
  #define M1
-//#define abs(x) fabs(x)
-// #define M1struct struct   // not needed with latest Apple compile (was needed in the past)
-// #define M1union union     // left in for now and mapped to blanks by macro defnition
- #define __int64 __int64_t
- #define bool int
- #define __forceinline
- #define rdtsc64(x)			 
+// #define __int64 __int64_t
+#define rdtsc64(x)		{x=__rdtsc();}
 // not available Intel/AMD specific hardware timer
  #define rand_s(x) rand_r(x)
- #define false 0
- #define true 1
- #define strcpy_s(a,b) strcpy(a,b)
- const unsigned int UINT_MAX = 0xffffffff;
 #else
 #ifndef _MSC_VER
  #define rand_s(x) rand_r(x)
