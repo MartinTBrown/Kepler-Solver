@@ -1,0 +1,41 @@
+
+Compile options:  STRICT PURE FAST cbrt_ver 3
+
+Cube root = 3 Ref3
+Cube root = 0 syscbrt
+141    BasicBM D    263 0.973   265 0.980   265 0.981   263 0.973   265 0.979
+Cube root = 1 Pow1/3
+141    BasicBM D    240 0.886   240 0.886   240 0.885   240 0.887   244 0.900
+Cube root = 2 expln
+141    BasicBM D    237 0.877   242 0.896   242 0.894   241 0.891   242 0.894
+Cube root = 3 Ref3
+141    BasicBM D    262 0.967   264 0.977   265 0.979   272 1.006   248 0.916
+Cube root = 4 asmcbrt
+141    BasicBM D    247 0.912   247 0.912   247 0.913   247 0.913   248 0.914
+Cube root = 5 Ncbrt3
+141    BasicBM D    230 0.849   230 0.849   230 0.849   230 0.850   230 0.849
+Cube root = 6 Ncbrt4
+141    BasicBM D    236 0.872   236 0.872   236 0.872   236 0.872   236 0.872
+Cube root = 7 Ndcbrt4
+141    BasicBM D    227 0.838   227 0.838   227 0.839   227 0.839   227 0.838
+Cube root = 8 Nrcbrt4
+141    BasicBM D    248 0.914   246 0.907   246 0.908   247 0.912   246 0.907
+Cube root = 9 Ccbrt2
+141    BasicBM D    240 0.888   238 0.878   238 0.879   238 0.879   238 0.879
+Cube root = 10 Ccbrt5
+141    BasicBM D    280 1.032   278 1.026   278 1.024   285 1.053   290 1.070
+Cube root = 11 BSD fail e =                     0.85 M =                        0
+141    BasicBM D    267 0.986   fail                     -nan                     -nan
+		   266 0.982   fail                     -nan                     -nan
+		   266 0.983   fail                     -nan                     -nan
+		   266 0.982   fail                     -nan                     -nan
+		   266 0.982   fail                     -nan                     -nan
+		fail count = 60000000
+
+Cube root = 12 GNU
+141    BasicBM D    234 0.865   235 0.866   235 0.867   233 0.858   233 0.859
+Cube root = 13 Sun
+141    BasicBM D    230 0.849   228 0.842   233 0.860   235 0.867   228 0.843
+Cube root = 14 ret_x
+141    BasicBM D    156 0.578   158 0.584   156 0.576   158 0.582   156 0.576
+Cube root = 3 Ref3
