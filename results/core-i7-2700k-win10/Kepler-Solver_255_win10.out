@@ -1,0 +1,35 @@
+
+Compile options:  DEBUG STRICT PURE FAST MSC_ver 192930151 SSE undefined cbrt_ver 3
+
+Cube root = 3 Ref3
+Cube root = 0 syscbrt
+141    BasicBM A    966 0.002   977 0.002   940 0.002   999 0.002   940 0.002
+Cube root = 1 Pow1/3
+141    BasicBM A    932 0.002   906 0.002   985 0.002   978 0.002   907 0.002
+Cube root = 2 expln
+141    BasicBM A    874 0.002   885 0.002   875 0.002   874 0.002   913 0.002
+Cube root = 3 Ref3
+141    BasicBM A    975 0.002   967 0.002   954 0.002   961 0.002   977 0.002
+Cube root = 4 asmcbrt
+141    BasicBM A    952 0.002   952 0.002   977 0.002   952 0.002   990 0.002
+Cube root = 5 Ncbrt3
+141    BasicBM A   1201 0.003  1294 0.003  1279 0.003  1213 0.003  1232 0.003
+Cube root = 6 Ncbrt4
+141    BasicBM A   1170 0.003  1176 0.003  1155 0.003  1157 0.003  1155 0.003
+Cube root = 7 Ndcbrt4
+141    BasicBM A   1167 0.003  1198 0.003  1154 0.003  1181 0.003  1166 0.003
+Cube root = 8 Nrcbrt4
+141    BasicBM A   1216 0.003  1217 0.003  1217 0.003  1291 0.003  1275 0.003
+Cube root = 9 Ccbrt2
+141    BasicBM A   1277 0.003  1422 0.004  1248 0.003  1222 0.003  1237 0.003
+Cube root = 10 Ccbrt5
+141    BasicBM A   1102 0.003  1091 0.003  1159 0.003  1100 0.003  1091 0.003
+Cube root = 11 BSD
+141    BasicBM A   1077 0.003  1099 0.003  1092 0.003  1112 0.003  1076 0.003
+Cube root = 12 GNU
+141    BasicBM A   1139 0.003  1200 0.003  1190 0.003  1188 0.003  1145 0.003
+Cube root = 13 Sun
+141    BasicBM A   1041 0.002  1022 0.002   988 0.002  1061 0.003   995 0.002
+Cube root = 14 ret_x
+141    BasicBM A    727 0.002   703 0.002   786 0.002   717 0.002   717 0.002
+Cube root = 3 Ref3
