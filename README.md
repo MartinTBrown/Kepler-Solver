@@ -124,6 +124,10 @@ Adding an extra parameter 1 onto the command line enables verbose mode.
 	go wrong due to rounding errors. Normal mode only errors worse than the high watermark are reported. 
 	keplersolver 100005	will do a random challenge test against the reference algorithm
 
+ ### TOY stand alone versions
+ 	Sample code in C/C++, Fortran95 and as an Excel spreadsheet in CSV format which each implement the
+  	main algorithms and reference algorithms from Landis Markely FLM95 and Lynden-Bell DLB15
+
 ### verify.cpp
 	Contains sanity tests of a few routines and two more generic test frames
 	keplersolver 200 <method1> <method> 	takes a pair of the other starter methods and compares them
