@@ -20,15 +20,101 @@
 //	Github sources available at https://github.com/MartinTBrown/Kepler-Solver
 //	Author contact details: martink@nonad.co.uk
 
-
 #include "stdafx.h"
+#include "intel.h"
 
-// most of these functions the call overhead dominates and they tend not to inline 
+double PA = 60.0;
+double PB = 7.0;
+double PC = 3.0;
+
+void SetPA(double a)
+{
+	PA = a;
+}
+
+void SetPB(double b)
+{
+	PB = b;
+}
+
+void SetPC(double c)
+{
+	PC = c;
+}
 
 double MTB_Pade32Sin(double M)
 {
 	return M*(20-7/3*M*M)/(20+M*M);
 }
+
+double MTB_Pade32ABCSin(double M)
+{
+	return M * (PA - PB * M * M) / (60 + PC * M * M);
+}
+
+
+
+double ErrorIntegralX(double x)
+{
+	double M, dM = 1.0 / 2048;
+	double err, err2;
+	int i;
+	SetPB(6.8899 + x);
+	SetPC(3.1101 + x);
+	err2 = 0;
+	M = 0;
+	for (i = 0; i <= 2048; i++)
+	{
+		err = Pade32err(M);
+		err2 += err * err;
+		M += dM;
+	}
+	return err2;
+
+}
+
+
+double ErrorIntegralY(double x)
+{
+	double M, dM = 1.0 / 2048;
+	double err, err2;
+	int i;
+	SetPB(7 + x);
+	SetPC(3 + x);
+	err2 = 0;
+	M = 0;
+	for (i = 0; i <= 2048; i++)
+	{
+		err = Pade32err(M);
+		err2 += err * err;
+		M += dM;
+	}
+	return err2;
+}
+
+
+double ErrorIntegralXY(double e, double MM)
+{
+	double M, dM = 1.0 / 2048;
+	double err, err2, x, y;
+	x = e / 8;
+	y = MM/pi /50-0.01;
+	int i;
+	SetPB(7 - x);
+	SetPC(3 + x*1.1329 + y);
+	err2 = 0;
+	M = 0;
+	for (i = 0; i <= 2048; i++)
+	{
+		err = Pade32err(M);
+		err2 += err * err;
+		M += dM;
+	}
+	return 1e-7-err2;
+}
+
+
+
 
 double MTB_Pade52Sin(double M)
 {
@@ -71,6 +157,16 @@ double MTB_Pade64Cos(double M)
 {
 	return 1 - M*M*(65520-M*M*(3780-59*M*M))/(131040+M*M*(3360+34*M*M)); // M*(1-M*M*(4158000-M*M*(122220-1331*M*M))/(24948000+M*M*(514080+3990*M*M)));
 }
+
+
+double MTB_Pade66Cos(double M)
+{
+	double M2, M4;
+	M2 = M * M;
+	M4 = M2 * M2;
+	return 1 - M2/2 * (39251520 - M2 * 2116800 + 29484 * M4) / (39251520+M4*16632 + M2 * (1154160 + 127 * M4)); // go faster code
+}
+
 double M_Value(double e, double M)
 {
 	return M;
@@ -112,15 +208,135 @@ double MTB_Poly13Sin(double M)
 {
 	double M2 = M * M;
 	return M + M * M2 * (1 / 6 - M2 * (1 / 20 - M2 * (1 / 42 - M2*(1/ 72-M2*(1/110-M2/156)))));
+}
 
+double MTB_Poly13SinF(double M)
+{
+	double M2, M4;
+	M2 = M * M;
+	M4 = M2 * M2;
+	return M + M * (M2 * (1 / 6 + M4/840 * (1 + M4/7920)) - M4 * (1 / 20  + M4 * (1 / 3024 + M2 / 17160)));
+}
+
+
+double MTB_Pade32Atan(double M)
+{
+	double M2 = M * M;
+	return M*(15-M2)/(15-6*M2);
+}
+
+
+
+double MTB_Pade32Tan(double M)
+{
+	double M2 = M*M;
+	return M - M*M2*(35+4*M2)/(105+75*M2);
+}
+
+
+double MTB_Pade54Tan(double M)
+{
+	double M2 = M * M;
+	return M*(945-M2*(105-M2)) / (945 - M2*(420-15*M2));
 }
 
 
 double MTB_Pade52Atan(double M)
 {
-	double M2 = M*M;
-	return M - M*M2*(35+4*M2)/(105+75*M2);
+	double M2 = M * M;
+	return M * (105 + M2 * (40 - 4 * M2)) / (105 + 75*M2);
 }
+
+
+double MTB_Pade54Atan(double M)
+{
+	double M2 = M * M;
+	return M * (945 + M2 * (735 + 64 * M2)) / (945 + M2 * (1050 + M2 * 225));
+}
+
+
+double MTB_Pade56Atan(double M)
+{
+	double M2 = M * M;
+	return M*(1155+M2*(1190+231*M2))/(1155+M2*(1575+M2*(525+M2*25)));
+}
+
+double MTB_Pade74Tan(double x)
+{
+	double x2 = x * x;
+	return x + x * x2 / 3 * (315 - 14 * x2) / (315 - x2 * (139.99999986 - 4.999997 * x2));
+}
+
+double MTB_Pade76Atan(double x)
+{
+	double x2, x4;
+	x2 = x * x;
+	x4 = x2 * x2;
+	return x * (15015 + x4*5943 + x2*(19250 + 256 * x4)) / (15015 + 11025 * x4 + x2 * (24255 + 1225*x4)); // optimised for parallel execution
+}
+
+double MTB_Pade96Atan(double x)
+{
+	double x2, x4;
+	x2 = x * x;// was 11025 for last x^6 term
+	x4 = x2 * x2;
+//	return x * (19.732778883 + x2 * (22.30544997 + x4 * 0.176553583) + 5.663396312 * x4) / (19.73278031 + x2 * (28.8830412 + x4) + 11.34457073*x4);
+	return x * (0.9999999992 + x2 * (1.1303754276 + x4 * 0.0089472229) + 0.2870044785 * x4) / (1 + x2 * (1.4637086496 + x4 * 0.0506770959) + 0.5749098994 * x4);
+	return x * (0.99999999925 + x2 * (1.1303754275 + x2 * (0.2870044786 + x2*0.00894722297))) / (1 + x2 * (1.46370864965 + +x2 * (0.57490989934 + x2 * 0.0506770959))) ;
+
+	return x * (0.99999999925 + x2 * (1.1303754275 + x4 * 0.00894722297) + x4 * 0.280044786) / (1 + x2 * (1.46370864965 + x4 * 0.0506770959) + x4 * 0.57490989934);
+	return x -x*x2/3*(75075 + 23859*x4 + x2*(90090 + 256*x4)) / (75075+72765*x4+x2*(135135+11026.3*x4)); // optimised for parallel execution
+
+}
+
+double Rat_tan(double x)
+{
+	// Remez polynomial good to 1e-8
+	double x2 = x*x;
+	return x * (0.99999998 - 0.958010197 * x2) / (1 - x2 * (0.42913502 - 0.00971659383 * x2));
+
+}
+
+double Rat_sin(double x)
+{
+	double x2 = x * x;
+	return x - x * x2 * (2796203 / 16777216 - x2 * (0.00833282412 - 0.000195878418 * x2));
+}
+
+double Patan76(double x)
+{
+	if (x < 1)
+		if (x >= 0)
+			return MTB_Pade96Atan(x);
+		else
+		{
+			if (x > -1)
+				return pi + MTB_Pade96Atan(x);
+		}
+	x = 1 / x;
+	return pi / 2 - MTB_Pade96Atan(x);
+}
+
+double Remez_Atan56(double x)
+{
+	double x2 = x * x;
+	return x - x2 * x / 3.0 * (88.83410112 + x2 * 5.642737025) / (88.83410407 + x2 * (58.62007459 - x2));
+}
+
+double Patan56(double x)
+{
+	double x2 = x * x;
+	if (x < 1)
+		if (x >= 0)
+			return Remez_Atan56(x);
+		else
+		{
+			if (x > -1)
+				return pi + Remez_Atan56(x);
+		}
+	x = 1 / x;
+	return pi / 2 - Remez_Atan56(x);
+};
 
 
 double E_sinE_Pade(double E)

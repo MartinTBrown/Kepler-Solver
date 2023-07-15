@@ -26,17 +26,24 @@
 #include "classic.h"      // for Kepler_f
 #include "deltas.h"    // NR, Halley
 #include "cuberoot.h"  // for cbrt when not using system cbrt of x86 ASM 
+#include "PadeApprox.h"
 
 #ifndef M1
 #ifndef _M_IX86
 #include "immintrin.h"
+#include "intrin.h"
+#else
+#include <intrin.h>
+
+#pragma intrinsic(__rdtsc)
+
 #endif
 #endif
 
 // this stuff is very Intel specific and isolated for that reason
 
-struct tempreal80 { int64_t mantissa; unsigned short exp; };
-union  mydouble { double x; int64_t i64; } result;
+struct tempreal80 { int64_t mantissa; unsigned short exp; }; // was uint64 but fails to compile
+union  mydouble { double x; int64_t i64; } result; // was uint64 but failes to compile
 
 union  mydouble80 { long double x80; M1struct tempreal80 x; short int i[5];} result80;
 
@@ -123,11 +130,6 @@ double FLM_Fixup(double e, double M, double E)
 
 #ifdef _MSC_VER
 
-#ifdef _M_IX86
-#else
-#include <intrin.h>
-#endif
-
 // Microsoft specific inline assembler hacks to get aroound lack of MSC support for long double
 // to obtain a better reference we force 80 bit floating point computation on the x87 stack
 // this code will only work properly with some compiler options. Requires fp /fast
@@ -166,9 +168,9 @@ void FPinit()
 #endif
 }
 
-void rdtsc64(__int64 &t) 
+void rdtsc64(int64_t &t) 
 {
-#ifdef _M_IX86
+/* #ifdef _M_IX86
 	_asm{ 
 		cpuid	
 		rdtsc 
@@ -178,8 +180,9 @@ void rdtsc64(__int64 &t)
 		cpuid	
 	}
 #else
+*/
 	t = __rdtsc();
-#endif
+//#endif
 }	
 
 double tan87(double x)
@@ -200,6 +203,24 @@ double tan87(double x)
 }
 
 
+double atan87(double x)
+// return fptan x forced to the x87 coprocessor
+{
+	double y;
+#ifdef _M_IX86
+	_asm {
+		fld qword ptr[x]
+		fld1
+		fpatan
+//		fstp st(0)  // throw away "1"
+		fstp qword ptr[y]
+	}
+#else
+	y = tan(x);
+#endif
+	return y;
+}
+
 double sin87(double x)
 // return fpsin x forced to the x87 coprocessor
 {
@@ -215,6 +236,24 @@ double sin87(double x)
 #endif
 	return y;
 }
+
+double Pade32err(double x)
+{
+	double y = 0; // was  MTB_Pade32ABCSin(x);
+#ifdef _M_IX86
+	_asm {
+		fld qword ptr[x]
+		fsin
+		fsub qword ptr[y]
+		fstp qword ptr[y]
+	}
+#else
+	y = sin(x)-y;
+#endif
+	return y;
+
+}
+
 double cos87(double x)
 // return fpsin x forced to the x87 coprocessor
 {
@@ -585,10 +624,12 @@ main_loop :
 double Verify_s2c2_87(double e, double M)
 {
 	double x;
-	short z;
+
 	x = M - e;
 #ifdef _M_IX86
-	__asm {
+	{
+		short z;
+		__asm {
 
 #ifdef X87_64
 		fstcw word ptr[z]
@@ -602,13 +643,14 @@ double Verify_s2c2_87(double e, double M)
 		fmul st, st(0)
 		faddp st(1), st
 		fld1
-		fsubp st(1),st
+		fsubp st(1), st
 		fstp qword ptr[x]
 #ifdef X87_64
 		and word ptr[z], 0xFEFF			// restore 53 bit precision
 		fldcw word ptr[z]
 #endif
 	}
+}
 #endif
 	return x;
 
@@ -861,7 +903,7 @@ double ASM_2x(double x)
 
 #ifdef M1
 /*
-__int64_t rdtsc64(__int64_t &t)
+int64_t_t rdtsc64(int64_t_t &t)
 {
 	return 42;
 }
@@ -1005,10 +1047,9 @@ double Verify_sincos_cos87(double e, double M)
 #endif
 
 
-
 void Test80bit(double e, double M, double E, bool verbose)
 {
-        const int64_t b63 = 0x8000000000000000;
+	const int64_t b63 = 0x8000000000000000; // was uint64
 	const unsigned short b15 = 0x8000;
 	
 	if (verbose) printf(" f = M + e.sin(E) evaluated where e = %6.5f  M= %6.5f  E=%6.5f\n", e, M, E);
@@ -1017,7 +1058,7 @@ void Test80bit(double e, double M, double E, bool verbose)
 #ifndef M1
 	printf ("\nKepler f53\t%+22.16e %s %016I64X x 2^%i\n", result.x, ((result.i64 & b63)? "-":"+"), 
 		((result.i64 & 0x000FFFFFFFFFFFFF)<<11)|b63, (int)((result.i64 & 0x7FFFFFFFFFFFFFFF) >> 52)-1024); 
-	printf("53 bit mask \t\t\t\t   %016I64X \n", ((((__uint64_t) 1)<<53)-1)<<11);
+	printf("53 bit mask \t\t\t\t   %016I64X \n", ((((int64_t) 1)<<53)-1)<<11);
     printf ("Kepler f80\t%+22.16e %s %16I64X x 2^%hi\n\n", 
 		M, ((result80.x.exp & b15)? "-":"+"),  result80.x.mantissa, (result80.x.exp &0x7FFF)-16384);
 #endif

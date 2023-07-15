@@ -48,17 +48,16 @@ const char *name[NFUNCT];
 // char refine_name[100][12];
 
 const int NE = 40; // was 30;
-const int NM = 85;
-const double test_e[NE] = {0.0, 1e-6, 0.001, 0.002, 0.005, 0.01, 0.02, 0.03, 0.04, 0.05, 0.075, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.55, // 18 this line
-//	0.6, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 0.98, 0.99, 0.995, 0.998,0.999, 0.9999, 0.99999, 0.999999, 1.0 }; // original list
-0.6, 0.65, 0.7, 0.75, 0.8, 0.8474986, 0.84749866194415, 0.9, 0.95, 0.98, 0.99, 0.995, 0.998,0.999, 0.9999, 0.99999, 0.999999, 
-1-1e-8, 1-1e-9, 1-2e-16, 1.0 }; 
-const double test_M[NM] = {0.0, 1e-150, 1e-99, 1e-30, 1e-26,1e-24, 5e-24,8e-24, 1e-23, 2e-23, 1e-22,5e-22, 1e-21, 2e-21, 
-	1e-18,  1e-15, 1e-12, 1e-11, 1e-10, 2e-10, 5e-10, 1e-9, 1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 0.001, 0.002, 0.005, 
-	0.01, 0.02, 0.03, 0.04, 0.05, 0.07, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, pi/2-1.0, 0.6, 0.7, 0.8, 0.9, 1.0,  
-	pi/2-0.5, 1.1, 1.2, 1.3, pi/2-0.25, 1.4, pi/2-0.1, 1.5, pi/2, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1, 2.2, 2.3, 
-	2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3.0, 3.1, pi-0.02, pi-0.01, pi-0.001, pi-0.0001, pi-1e-6, pi-1e-8, pi-1e-10, 
-	pi-1e-12, pi-1e-14, pi-2.2e-16, pi};
+const int NM = 86;
+const double test_e[NE] = {0.0, 1e-6, 0.001, 0.002, 0.005, 0.01, 0.02, 0.03, 0.04, 0.05,  0.075, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.55, 0.6, 0.65, // 20
+//0.75, 0.8, 0.85, 0.9, 0.95, 0.98, 0.99, 0.995, 0.998,0.999, 0.9999, 0.99999, 0.999999, 1.0 }; // original list
+0.7, 0.75, 0.8, 0.8474986, 0.84749866194415, 0.9, 0.95, 0.98, 0.99, 0.995,  0.998, 0.999, 0.9999, 0.99999, 0.999999, 1-1e-8, 1-1e-9, 1-2e-16, 1.0 }; // 19 
+
+const double test_M[NM] = {0.0, 1e-150, 1e-99, 1e-30, 1e-26,  1e-24, 5e-24, 8e-24, 1e-23, 2e-23,  1e-22, 5e-22, 1e-21, 2e-21, 1e-18,  // 15
+    1e-15, 1e-12, 1e-11, 1e-10, 2e-10,  5e-10, 1e-9, 1e-8, 1e-7, 1e-6,   1e-5, 1e-4, 0.001, 0.002, 0.005, 0.01, 0.02, 0.03, 0.04, 0.05, //20
+	0.07, 0.1, 0.15, 0.2, 0.25,  0.3, 0.4, 0.5, pi/2-1.0, 0.6,   0.7, 0.8, 0.9, 1.0, pi/2-0.5,  1.1, 1.2, 1.3, pi/2-0.25, 1.4, //20 
+	pi/2-0.1, 1.5, pi/2, 1.6, 1.7,  1.8, 1.9, 2.0, 2.1, 2.2,   2.3, 2.4, 2.5, 2.6, 2.7,  2.8, 2.9, 3.0, 3.1, pi-0.02,  //20
+	pi-0.01, pi-0.001, pi-0.0001, pi-1e-6, pi-1e-8,  pi-1e-10, pi-1e-12, pi-1e-14, pi-2.2e-16, pi}; //10
 
 // e = 0.874986... is for investigation of Halley misbehaviour leading to Danby's S1' = M + 0.85e assertion
 // e = 1-1e-8, 1e-9 and 1-2e-16 added to test accuracy under extreme conditions
@@ -101,7 +100,7 @@ void ShowHelp()
 	printf(" KeplerSolver N      where N<%i will invoke the following functions:\n", NFUNCT+NSPECIAL-1);
 	for (i=0; i<NFUNCT; i+=1)
 	{
-        if (name[i]) printf("%4i : %-9s\t", i, name[i]);
+		if (name[i][1]) printf("%4i : %-9s\t", i, name[i]);
 		if (i % 5 == 0) printf("\n");
 	}
 //		if (name[i][0]) printf("\t%2i : %s\t%2i : %s\n", i, name[i], i+1, name[i+1]);
@@ -165,7 +164,7 @@ const char *GetName(int n)
 void QuickTimeAll(double e, int n)
 {
 	double dM, E, M;
-        int64_t start, end;
+	int64_t start, end;
 	volatile time_t  start_t, end_t;
 	int i, j, k;
 	double (*func)(double, double);
@@ -175,7 +174,7 @@ void QuickTimeAll(double e, int n)
     for (i=0; i<n; i++)
 	{
 		func = test[i];
-        if (name[i]) // ignore unused entries in table
+	    if (name[i][1]) // ignore unused entries in table
 		{
 			func = test[i];
 			for (j=0; j<6; j++)
@@ -193,8 +192,8 @@ void QuickTimeAll(double e, int n)
 		}
 		rdtsc64(end);
 		end_t = clock()-start_t;
-        end = (end-start+MDIV/2)/MDIV;
-        if (!j)  printf("\n%-2i %10s %1X ", i, name[i], (int)(((intptr_t)func) & 0xff) >> 4);
+		end = (end-start+MDIV/2)/MDIV;
+		if (!j)  printf("\n%-2i %10s %1X ", i, name[i], (int)((((intptr_t)func) & 0xff) >> 4));
 	  else
 #ifdef M1
             printf(" %5.3f", (double)end_t/CLOCKS_PER_SEC);
@@ -536,7 +535,7 @@ void RandomTest(int n, int64_t  repeats, bool verbose)
 	unsigned int hist[BINHI];
 
 #ifdef use_int64
-        __int64 i;
+	int64_t i;
 #else
 	int i;
 #endif
@@ -547,7 +546,7 @@ void RandomTest(int n, int64_t  repeats, bool verbose)
 	s = 0;
 	binsize = pow(2.0, -54.0)*2; // *2.0; // was 0.0625; //was  *2.0;
 	binbase = BINS * binsize + binsize / 2;
-    if (name[n])
+	if (name[n][1] != 0)
 	{
 		for (j = 0; j < BINHI; j++) hist[j] = 0;
 #ifdef M1
@@ -717,7 +716,7 @@ void QuickTest(int n, double e)
   	    for (i=0; i<NM; i++)
 			printf("%17.15f ", qtest_M[i]);
 	}
-    if (name[n][0] != '_')
+	if (name[n][0] != '_')
 	{
 	  printf("\n%-12s ", name[n]);
 	  for (i=0; i<NM; i++)
@@ -1187,6 +1186,67 @@ void TestDnt2All()
 	{
 		TestDNt2(i);
 	}
+}
+
+void TestFun1(double (*fun1)(double), double (*ref1)(double), const char* name, double* testval, int n, bool relative)
+{
+	double err,  x, ref_x;
+	int i;
+	printf("\n%-10s ", name);
+	for (i = 0; i < n; i++)
+	{
+		x = (*fun1)(testval[i]);
+		ref_x = (*ref1)(testval[i]); // x87 version assumed to be good
+		err = ref_x - x;
+		if (relative && (ref_x != 0)) err = err / ref_x;
+		printf(" %12.6g", err);
+	}
+
+
+}
+
+
+double zero(double x)
+{
+	return 0.0;
+}
+
+void TestTrig(bool relative)
+{
+	double testval[8] = { 0.0, pi / 16, pi / 12, pi / 8, pi / 6, pi / 4, pi / 3, pi / 2 };
+	TestFun1(zero, ret_x, "M = ", testval, 8, relative);
+	TestFun1(zero, sin87, "Target_sin", testval, 8, relative);
+	TestFun1(MTB_Poly9Sin, sin87, "Poly9sin", testval, 8, relative);
+	TestFun1(MTB_Poly11Sin, sin87, "Poly11sin", testval, 8, relative);
+	TestFun1(MTB_Poly13Sin, sin87, "Poly13sin", testval, 8, relative);
+
+	TestFun1(MTB_Pade32Sin, sin87, "Pade32sin", testval, 8, relative);
+	TestFun1(MTB_Pade52Sin, sin87, "Pade52sin", testval, 8, relative);
+	TestFun1(MTB_Pade74Sin, sin87, "Pade74sin", testval, 8, relative);
+	TestFun1(MTB_Pade76Sin, sin87, "Pade76sin", testval, 8, relative);
+	TestFun1(zero, cos87, "Target_cos", testval, 8, relative);
+	TestFun1(MTB_Pade22Cos, cos87, "Pade22cos", testval, 8, relative);
+	TestFun1(MTB_Pade42Cos, cos87, "Pade42cos", testval, 8, relative); 
+	TestFun1(MTB_Pade44Cos, cos87, "Pade44cos", testval, 8, relative);
+	TestFun1(MTB_Pade64Cos, cos87, "Pade64cos", testval, 8, relative);
+	TestFun1(MTB_Pade66Cos, cos87, "Pade66cos", testval, 8, relative);
+	TestFun1(zero, tan87, "Target_tan", testval, 8, relative);
+	TestFun1(MTB_Poly7Tan, tan87, "Poly7tan", testval, 8, relative);
+	TestFun1(MTB_Pade52Tan, tan87, "Pade52tan", testval, 8, relative);
+//	TestFun1(MTB_Pade56Tan, atan87, "Pade56atan", testval, 8, relative);
+	TestFun1(MTB_Pade76Tan, tan87, "Pade76tan", testval, 8, relative);
+	TestFun1(zero, atan87, "Target_atan", testval, 8, relative);
+
+	TestFun1(MTB_Pade32Atan, atan87, "Pade32atan", testval, 8, relative);
+	TestFun1(MTB_Pade52Atan, atan87, "Pade52atan", testval, 8, relative);
+	TestFun1(MTB_Pade54Atan, atan87, "Pade54atan", testval, 8, relative);
+	TestFun1(MTB_Pade56Atan, atan87, "Pade56atan", testval, 8, relative);
+	TestFun1(MTB_Pade76Atan, atan87, "Pade76atan", testval, 8, relative);
+	TestFun1(Patan56, atan87, "Remez56atan", testval, 8, relative);
+	TestFun1(MTB_Pade96Atan, atan87, "Pade96atan", testval, 8, relative);
+
+
+
 }
 
 double Eval_error_rk(double k)

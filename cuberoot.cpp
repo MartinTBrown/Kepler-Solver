@@ -67,8 +67,8 @@
 // prefer      s = s + s*(x-t)/(2t+x)
 // There is an even better form using fused multiple add but not yet finished.
 // 
-// C_cbrt2 & 5 are an attempt to replicate Intel's remarkable new system cbrt
-// which appears to exploit the now very fast sqrt function and 1/3  = 010101 ...
+// C_cbrt5 is an attempt to replicate Intel's remarkable new system pow(x,1/3)
+// which appears to exploit the now very fast sqrt function and 1/3  = 0.010101 ...
 // It also may have a final refinement step using fused multiply add to beat the 
 // accuracy limits of conventional double precision arithmetic.
 // 
@@ -101,7 +101,7 @@ double ret_x(double x)
 	return x;
 }
 
-char cbrt_name[15][9] = { "syscbrt", "Pow1/3","expln","Ref3", "asmcbrt","Ncbrt3", "Ncbrt4", "Ndcbrt4", "Nrcbrt4","Ccbrt2","Ccbrt5","BSD", "GNU", "Sun", "ret_x"};
+char cbrt_name[15][9] = { "syscbrt", "Pow1/3","expln","Ref3", "x87cbrt","Ncbrt3", "Ncbrt4", "Ndcbrt4", "Nrcbrt4","Ccbrt2","Ccbrt5","BSD", "GNU", "Sun", "ret_x"};
 
 
 void SetCubeRoot(int N)
@@ -120,7 +120,7 @@ void SetCubeRoot(int N)
 	case 7: cuberootfun = N_dcbrt4; break;
 
 	case 8: cuberootfun = N_rcbrt4; break;
-	case 9: cuberootfun = C_cbrt2; break;
+	case 9: cuberootfun = ret_x; break;
 	case 10: cuberootfun = C_cbrt5; break;
 	case 11: cuberootfun = BSD_cbrt; break;
 	case 12: cuberootfun = gnu_cbrt; break;
@@ -176,20 +176,16 @@ double SolveCubicBM(double a, double b, double c)
 	return t;
 }
 
+// #define ASM80
+// #define TOY
 
-#ifdef _MSC_VER
-//#define TOY
-//#define ASM80
-
+#ifdef _M_IX86
 double ASM_cbrt(double x)
 {
 	// home brew cbrt about twice as fast as pow(x,1.0/3) or sys_cbrt only defined for positive x
 	// Noddy version runs x = 0..1   max error 5e-5 + Halley => 1e-14
 	// Improved by addition of magic x^4 correction now good to 23 bits & full machine precision.
 
-	
-	
-#ifdef _M_IX86
 	double s, t;
 	int nexp=0;
 	__asm{
@@ -262,28 +258,15 @@ double ASM_cbrt(double x)
 		fmul st,st(1)
 		fsubp st(1),st
 		fstp qword ptr[s]
-
-
 	}
 	FPU80_off();
-
-#endif
-#else
-	double s;
-	s = cbrt(x);
 #endif
 	return s;
 }
-
 #else
 double ASM_cbrt(double x)
 {
-	return cbrt(x);
-}
-
-double ASM_cbrt2(double x)
-{
-	return cbrt(x);
+	return cbrt(x);  // inline asm not available
 }
 #endif
 
@@ -299,6 +282,7 @@ double Ref_cbrt2(double x)
 
 double Ref_cbrt3(double x)
 {  // this is current best buy fast and accurate
+	// could be mad emore accurate be precision t*t using fused multiply add
 	double t, y;
 	if (x) y = exp(log(x) / 3); else return x;
 	
@@ -368,39 +352,6 @@ double N_cbrt3(double x)
 	return s;
 }
 
-
-double C_cbrt2(double x)
-{
-	// still not quite right - very odd timings
-	short i, nexp;
-	M1union myreal32 z;
-	float f;
-	double s, t;
-#ifdef _DEBUG
-	M1union myreal32 ref;
-	ref.f32 = (float) Ref_cbrt3(x);
-#endif
-	z.f32 = (float) x;
-	z.i32 -= 0x3f800000;
-	i = z.s[1]>>7;
-	z.i32 = z.i32/3;
-	nexp = (z.s[1] & 0xff80);
-	i = i-(nexp>>7)*3; // remainder
-	z.i32 = (z.i32 & 0x3fffffff) | 0x3F800000;
-	if (i)
-	{
-		z.i32 -= i*0x2AAAAA;
-	}
-	f = z.f32-1;
-	z.f32 = z.f32 - f * f * (x4magic * f * f + (1.0f + f / 3) / (1.0f + f + f));
-    z.s[1] += nexp;
-	s = z.f32*realfudge[i+2];
-	if (s==0.0) s = sqrt(x);
-	t = s*s*s;
-	s = s + s * (x - t) / (t + t + x);
-	return s;
-}
-
 double N_cbrt(double x)
 {
 	// for speed ignore sign always positive here - relies on IEEE FP structure
@@ -427,7 +378,7 @@ double N_cbrt(double x)
     exp = exp >> 7;
 	exp = exp%3;
 	man = y.ui32 & 0x007ffffc;
-        temp.i64 = (int64_t) man * 0x55555555;
+	temp.i64 = (int64_t) man * 0x55555555;
 
 #ifdef _DEBUG
 	temp.i32[0]  = temp.i32[1] | 0x3f800000;
@@ -449,44 +400,6 @@ if (s == 0.0)
 //	s *= (t+x+x)/(x+t+t);  // much worse error 2x better alternative below
 	s = s + s * (x - t) / (t + t + x);
 	return s;
-}
-
-double N_rcbrt(double x)
-{
-	// for speed ignore sign always positive here - relies on IEEE FP structure
-	// only as fast as exp(log(x)/3) but a lot more work and very opaque.
-	// scope to tidy up exp & nexp to avoid exp % 3 but disappointing performance
-	// benchmarks well but no good in the real application SolveCubic - unclear why
-	// doesn't handle sub normal numbers well
-
-	M1union myreal32 y;
-	float z;
-	int exp, man, nexp;
-	volatile M1union myreal64 temp;
-#ifdef _DEBUG
-	M1union myreal32 target;
-	target.f32 = (float)pow(x, (1.0 / 3));
-#endif
-	if (x == 0) return x;
-	y.f32 = (float)x;
-	exp = ((y.us[1] & 0x7f80)) - 0x3f80;
-	nexp = exp * 0x5555;
-	nexp += 0x1000;
-	if (nexp < 0) nexp += 0x0080000;
-	exp = exp >> 7;
-	exp = exp % 3;
-	man = y.ui32 & 0x007ffffc;
-        temp.i64 = (int64_t)man * 0x55555555;
-
-#ifdef _DEBUG
-	temp.i32[0] = temp.i32[1] | 0x3f800000;
-#endif
-	temp.i32[1] |= 0x3f800000;
-	z = temp.f32[1] - 1;
-	z = 1 + z - z * z * (x4magic * z * z + (1 + z / 3) / (1 + z + z));
-	temp.f32[1] = rcbrt2n[exp] * z;
-	temp.i32[1] += (int)(nexp & 0xff800000);
-	return (double)temp.f32[1];  // floating point real version
 }
 
 #define Z32
@@ -549,7 +462,7 @@ double N_cbrt4(double x)
 
 
 
-double N_rcbrt4(double x)
+double rcbrt4(double x)
 {
 	// for speed ignore sign always positive here - relies on IEEE FP structure
 	// only as fast as exp(log(x)/3) but a lot more work and very opaque.
@@ -566,7 +479,7 @@ double N_rcbrt4(double x)
 #ifdef _DEBUG
 	M1union myreal64 target64;
 	M1union myreal32 target;
-	target64.f64 = 1/Ref_cbrt3(x); // (float) 1 + (y.f32-1)/3.0;
+	target64.f64 = 1 / Ref_cbrt3(x); // (float) 1 + (y.f32-1)/3.0;
 	target.f32 = (float)target64.f64;
 #endif
 	if (x == 0) return x;
@@ -579,7 +492,7 @@ double N_rcbrt4(double x)
 	man = (man - 3 * nexp) & 0x00300000;       // compute remainder
 #ifdef Z32
 // 32 bit	
- y.i32[1] = ((int)(8 * y.i32[1]) & 0x3fffffff) | 0x3f800000; // force to 1+x 32 bit real format & zap sign
+	y.i32[1] = ((int)(8 * y.i32[1]) & 0x3fffffff) | 0x3f800000; // force to 1+x 32 bit real format & zap sign
 #else
 // 64 bit
 	y.i32[1] = ((int)y.i32[1] & 0x3fffffff) | 0x3ff00000; // force to 1+x 64 bit form and zap sign
@@ -593,7 +506,7 @@ double N_rcbrt4(double x)
 #else
 			y.i32[1] = y.i32[1] - 0x000aaaaa;  // 64bit 32 was 0x00555555;
 #endif
-			s = 1/dcbrt2n[2];
+			s = 1 / dcbrt2n[2];
 		}
 		else
 		{
@@ -602,18 +515,18 @@ double N_rcbrt4(double x)
 #else
 			y.i32[1] = y.i32[1] - 0x00055555;  // 32bit was 0x002aaaaa;
 #endif
-			s = 1/dcbrt2n[1];
+			s = 1 / dcbrt2n[1];
 		}
 	}
 #ifdef Z32
 	//  32 bit version
 	z = y.f32[1] - 1;
-	z = 1.0f - z + z * z *(0.014f*z*z + (z + 13.20952237f) / (15.75f * z + 6.610273458f)); // reciprocal cbrt good to <1e-6
+	z = 1.0f - z + z * z * (0.014f * z * z + (z + 13.20952237f) / (15.75f * z + 6.610273458f)); // reciprocal cbrt good to <1e-6
 //	y.f32[1] = s * z;
 	y.f64 = s * z;
 #else	
 	dz = y.f64 - 1;
-	dz = 1 - dz + dz * dz * (0.013*dz*dz+(dz + 13.20952237) / (15.75 * dz + 6.610273458)); // reciprocal cbrt good to <1e-6
+	dz = 1 - dz + dz * dz * (0.013 * dz * dz + (dz + 13.20952237) / (15.75 * dz + 6.610273458)); // reciprocal cbrt good to <1e-6
 	y.f64 = s * dz;
 #endif
 
@@ -622,12 +535,20 @@ double N_rcbrt4(double x)
 //	return 1.0 / s;
 	t = s * s * s;
 	x = x / 3.0;
-	s = s * (4.0/3 - x*t);
-	t = s + s * t / 3;
+	s = s * (4.0 / 3 - x * t);
+//	s = s + s * (1.0 / 3 - x * t); not as accurate
+//	t = s + s * t / 3;
 	t = s * s * s;
-	s = s+s * (1.0/3 - x* s * s * s);
+//	s = s * (4.0 / 3 - x * t);  not as accurate
+
+	s = s + s * (1.0 / 3 - x * t);
 	t = s * s * s;
-	return 1 / s;  // this division can be avoided but included to make the code like all others a cbrt().
+	return s;
+}
+
+double N_rcbrt4(double x)
+{
+	return 1.0 / rcbrt4(x);  // this division can be avoided but included to make the code like all others a cbrt().
 
 }
 
@@ -746,7 +667,7 @@ double N_dcbrt4(double x)
 
 	M1struct myreal64 y;
 	double s, t, z;
-        int64_t man, nexp;
+	int64_t man, nexp;
 #ifdef _DEBUG
 	M1union myreal64 target;
 	target.f64 = pow(x, (1.0 / 3));
@@ -804,7 +725,7 @@ double N_dcbrt4_32(double x)
 	y.f64 = x;
 	man = y.i32[1] - 0x3ff00000;
 	//y.i32[1] = man / 3;
-        y.i64 = (int64_t)man * 0x55555555;
+	y.i64 = (int64_t)man * 0x55555555;
 	nexp = y.i32[1] & 0xfff00000;
 	man = (man - 3 * nexp) & 0xfff00000; 
 	y.i32[1] = (y.i32[1] & 0x3fffffff) | 0x3ff00000;
@@ -833,7 +754,51 @@ double N_dcbrt4_32(double x)
 	s = s + s * (x - t) / (t + t + x);
 	return s;
 }
-
+/*
+double rdcbrt(double x)
+{
+	// for speed ignore sign always positive here - relies on IEEE FP structure
+	// only as fast as exp(log(x)/3) but a lot more work and very opaque.
+	// scope to tidy up exp & nexp to avoid exp % 3 but disappointing performance
+	M1struct myreal64 y;
+	double s, t, z;
+	int64_t man, nexp;
+#ifdef _DEBUG
+	M1union myreal64 target;
+	target.f64 = pow(x, (1.0 / 3));
+#endif
+	y.f64 = x;
+	man = y.i64 - 0x3ff0000000000000;
+	y.i64 = man / 3;
+	nexp = y.i64 & 0xfff0000000000000;
+	man = (man - 3 * nexp) & 0xfff0000000000000; // >> 52;
+	y.i64 = (y.i64 & 0x3fffffffffffffff) | 0x3ff0000000000000;
+	if (man)
+	{
+		if (man > 0x0010000000000000)
+		{
+			z = y.f64 - 5.0 / 3; t = dcbrt2n[2];
+		}
+		else
+		{
+			z = y.f64 - 4.0 / 3; t = dcbrt2n[1];
+		}
+	}
+	else
+	{
+		z = y.f64 - 1.0; t = dcbrt2n[0];
+	}
+	if (z > 0)
+		z = z;
+	z = (z * (z * (243.00063 - 27 * z) + 486) + 162) / (z * (z * 567 + 648) + 162);
+	y.f64 = z / t;
+	y.i64 += nexp;
+	s = y.f64;
+	t = s * s * s;
+	s = s * (2 + t * x) / 3;
+	return s;
+}
+*/
 
 double N_rdcbrtNR(double x)
 {
@@ -842,7 +807,7 @@ double N_rdcbrtNR(double x)
 	// scope to tidy up exp & nexp to avoid exp % 3 but disappointing performance
 	M1struct myreal64 y;
 	double s, t, z;
-        int64_t man, nexp;
+	int64_t man, nexp;
 #ifdef _DEBUG
 	M1union myreal64 target;
 	target.f64 = pow(x, (1.0 / 3));
@@ -1114,7 +1079,7 @@ P4 = 0.145996192886612446982; /* 0x3fc2b000, 0xd4e4edd7 */
 
 double sun_cbrt(double x)
 {
-	union { double f; uint64_t i; } u = { x };
+	union { double f; int64_t i; } u = { x }; // was uint64
 	double_t r, s, t, w;
 	uint32_t hx = u.i >> 32 & 0x7fffffff;
 
@@ -1146,7 +1111,7 @@ double sun_cbrt(double x)
 	else
 		hx = hx / 3 + B1;
 	u.i &= 1ULL << 63;
-	u.i |= (uint64_t)hx << 32;
+	u.i |= (int64_t)hx << 32;  // was unint64 but failed to compile
 	t = u.f;
 
 	/*
@@ -1188,7 +1153,7 @@ double sun_cbrt(double x)
 double C_cbrt5(double x)
 {
 	// sqrt is now so fast that nested sqrt s to make the binary representation
-	// of 1/3 = 00101010101 binary becomes another novel starter!
+	// of 1/3 = 0.0101010101 binary becomes another novel starter!
 	// I suspect Intel's cbrt uses a variant of this approach
 
 	double rt2x, rt4x, s, t;
@@ -1198,6 +1163,7 @@ double C_cbrt5(double x)
 	rt4x = sqrt(rt2x);
 	s = 1.28*rt4x*(1+32.9*rt4x)/(6.5+27.4*rt4x);
 */
+	/*
 	rt2x = sqrt(sqrt(x));
 	rt4x = sqrt(sqrt(rt2x));
 	s = rt2x * rt4x;
@@ -1205,6 +1171,16 @@ double C_cbrt5(double x)
 	{
 		t = sqrt(sqrt(rt4x));
 		s = s * t*sqrt(sqrt(t));
+	}
+	*/
+	s = sqrt(sqrt(x));
+	s = sqrt(sqrt(s * x));
+	s = sqrt(sqrt(s * x));
+	if ((x < 1e-27) || (x > 1e28))
+	{
+		s = sqrt(sqrt(s * x));
+			s = sqrt(sqrt(s * x));
+			s = sqrt(sqrt(s * x));
 	}
 	t = s*s*s;
 	s += s * (x - t) / (t + t + x);
@@ -1225,7 +1201,7 @@ void Test_cbrt(int i, double x)
 {
 		double  mc, nc, pc;
 		pc = Ref_cbrt3(x); // as good a reference as any fastest and most accurate on MS C++
-		nc = C_cbrt2(x);
+		nc = C_cbrt5(x);
 		mc = N_dcbrt4a(x);
 		mc = N_rcbrt4(x);
 		printf("%-3i %9.6g %12.10g %12.10g %11.3e %18.14g %11.3e\n", i, x, pc, nc, pc-nc, mc, pc-mc);

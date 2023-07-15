@@ -279,9 +279,8 @@ double Verify_asin_sin(double e, double M)
 double Verify_acos_cos(double e, double M)
 {
 		double x;
-	x = M/pi - 2*e;
-	x = abs(x);
-	return cos(acos(x)) - x;  // 100%
+	x = (M+e*pi)/2 ;
+	return acos(cos(x)) - x;  // 100%
 }
 
 double Verify_tan_atan(double e, double M)
@@ -531,3 +530,38 @@ double Verify_cbrt(double e, double M)
 	x = M - e;
 	x = abs(x); 	c = cbrt(x); return c * c * c - x;
 }
+
+double Verify_x3N(double e, double M)
+{
+	double x, y;
+	const double twentyseven = 27.0;
+	const double three = 3.0;
+	x = M - e;
+//	y = x * x * x / 27.0;
+	y = x / 3.0;
+	y = y * y * y;
+	FPU80_on();
+#ifdef _M_IX86
+	_asm{
+
+		FLD qword ptr [x]
+//		FDIV qword ptr [three] // other way /3 then ^3
+		FLD st(0)
+		FMUL st,st(1)
+		FMULP st(1),st
+		FDIV qword ptr[twentyseven]  // / 27 
+		FSUB qword ptr[y]
+		FSTP qword ptr[y]
+	}
+#else
+	{
+		long double z = x;
+		z = z *z*z;
+		z = z / 27.0;
+		y = z - y;
+	}
+#endif
+	FPU80_off();
+	return y;
+}
+

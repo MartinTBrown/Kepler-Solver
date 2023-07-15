@@ -1,12 +1,16 @@
-#include "KeplerSolver.h"
+//#include "KeplerSolver.h"
 
 double E_sinE(double E);
 
 double tan87(double x);
 
+double atan87(double x);
+
 double sin87(double x);
 
 double cos87(double x);
+
+double Pade32err(double x);
 
 double sincos87(double x);
 
@@ -44,19 +48,18 @@ double Verify_tan_tan87(double e, double M);
 
 double Verify_atan_atan87(double e, double M);
 
-#ifdef _MSC_VER
-
 void FPU80_on();
 
 void FPU80_off();
 
-void rdtsc64(__int64 &t) ;
+void rdtsc64(int64_t &t) ;
+/*
 #else
 
 #ifndef M1
-        int64_t rdtsc64(int64_t &t);
+	int64_t rdtsc64(int64_t &t);
 #endif
 
 #endif
-
+*/
 void Test80bit(double e, double M, double E, bool verbose);

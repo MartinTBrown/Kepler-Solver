@@ -25,6 +25,7 @@
 #include "cuberoot.h"
 #include "solver.h"
 #include "opt_starter.h"
+#include "PadeApprox.h"
 #include "deltas.h" 
 
 #define OLDT2
@@ -38,7 +39,7 @@
 #define SolveCubic(a,b,c) SolveCubicInline(a,b,c)
 #endif 
 
-// these are the two optimsed for accuracy versions now used as a reference since they are typically
+// these are the two optimised for accuracy versions now used as a reference since they are typically
 // more accurate than the original classical methods I first used as a reference code at the outset
 
 double MTB_Reference(double e, double M)
@@ -434,6 +435,7 @@ double MTB_Basic2tp70(double e, double M)
 	if (t * M < 0) { t = -t; a = -1.0; }
 	else { a = 1.0; }
 	E = atan2(t, a);
+//	E = Patan76(t);
 	if (abs(E) < abs(M)) E = M;
 	return E;
 }
@@ -1003,8 +1005,12 @@ double MTB_BasicOpt_t2(double e, double M)
 	{
 		double t2, t2p1, f, d3En, d3Ed, d4E, df, ddf, dddf;
 		//		t = tan(E/2);
-
-  	    t2p1 = sqrt(t * t + 1);  // convert to tan of the half angle
+		t2 = t * t;
+		if (t2 < 7e-6)
+			t2p1 = 1+t2 * (32 + 12 * t2 - t2 * t2) / (64 + 40 * t2);
+		//		rc = t2 * (4 + t2) / (4 * t2 + 8);
+		else
+  	    t2p1 = sqrt(t2 + 1);  // convert to tan of the half angle
 		if (t > 0)
 			t = t / (1 + t2p1);
 		else
@@ -1293,11 +1299,7 @@ double MTB_BetterOpt(double ein, double M)
 
 	if (d >= 0.0)
 	{
-#ifdef STRICT
-if (r > 0) s = cbrt(r + d); else s = -cbrt(d - r);
-#else
-		if (r > 0) s = exp(log(r + d) / 3.0); else s = -exp(log(d - r) / 3.0);
-#endif
+		if (r > 0) s = cbrt(r + d); else s = -cbrt(d - r);
 		if (r2 < d * 1e-5)
 		{
 			s = 2 * r / (3 * cbrt(d));
@@ -1334,7 +1336,7 @@ if (r > 0) s = cbrt(r + d); else s = -cbrt(d - r);
 	E = atan2(a * t, a);
 	if (abs(E) < abs(M)) E = M; // defensive fix for M=pi rounding errors
 	if (M < 5e-19) return E; // refinement now greatly improved
-	//	return E+FLM_D4(e,M,E);
+//	return E+FLM_D4(e,M,E);
 	return E + FLM_D4T(e, M, E, t);
 
 	// unreachable code preserved for now (until I'm sure force inline works OK on most compilers)

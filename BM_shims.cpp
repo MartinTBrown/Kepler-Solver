@@ -620,7 +620,7 @@ double BM_NR_Better(double e, double M)
 {
 	double E;
 	E = MTB_Better(e, M);
-	if (M < 1e-11) return E;
+//	if (M < 1e-11) return E;
 	return E + FLM_NR(e, M, E);
 }
 
@@ -628,8 +628,8 @@ double BM_D3_Better(double e, double M)
 {
 	double E;
 	E = MTB_Better(e, M);
-	if (M < 1e-11) return E;
-	return E + Classic_Halley(e, M, E);
+//	if (M < 1e-11) return E;
+	return E + FLM_D3(e, M, E);
 }
 
 
@@ -637,7 +637,7 @@ double BM_D4_Better(double e, double M)
 {
 	double E;
 	E = MTB_Better(e, M);
-	if (M < 1e-11) return E;
+//	if (M < 1e-11) return E;
 	return E + FLM_D4(e, M, E);
 }
 

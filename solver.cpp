@@ -24,7 +24,7 @@
 #include "stdafx.h"
 #include "cuberoot.h"
 
-double (*solver_cbrt)(double) = GetCubeRoot();
+double (*solver_cbrt)(double) = cbrt;  // C++ was GetCubeRoot();
 
 void SetSolverCubeRoot(int n)
 {
@@ -247,7 +247,6 @@ double SolveCubicOpt(double a, double b, double c)
 		else
 		{
 			d = sqrt(d);
-
 			if (r > 0) s = cbrt(r + d); else s = -cbrt(d - r);
 			s2 = s * s;
 			if (s != 0) t = 2 * r * s2 / (q * q + s2 * q + s2 * s2) - a; // accurate to machine precision over our range of inputs
@@ -258,7 +257,6 @@ double SolveCubicOpt(double a, double b, double c)
 
 	else
 	{
-
 		s = sqrt(-q);
 		d = -r / (q * s);
 		t = acos(d) / 3.0;
@@ -370,11 +368,10 @@ double SolveCubicOpt3(double b, double c)
 
 double SolveCubicOptG(double a, double b, double c, int n)
 {
-	// this elegant version prescales a, b, c first and so
-	// avoids some rounding errors from division by 27 
+	// this elegant version prescales a first 
 	// allows user to select which of the 3 real roots to use n = -1,0,1
 
-	double a2, d, q, r, r2, s, t, t1, t2;
+	double a2, d, q, r, r2, s, t, t1, t2, u;
 	a = a / 3.0;
 	a2 = a * a;
 	r = (a * b - c) / 2.0 - a * a2;
@@ -400,8 +397,8 @@ double SolveCubicOptG(double a, double b, double c, int n)
 	else
 	{
 		s = sqrt(-q);
-		d = -r / (q * s);
-		t = acos(d) / 3.0;
+		u = -r / (q * s);
+		t = acos(u) / 3.0;
 		if (n)
 		{
 			if (n > 0)
@@ -409,11 +406,11 @@ double SolveCubicOptG(double a, double b, double c, int n)
 			else
 				t -= 2 * pi / 3; // needed to handle M = -pi/2+e correctly
 		}
+		t1 = 2 * s * cos(t + 2.0 * pi / 3) - a;
+		t2 = 2 * s * cos(t - 2.0 * pi / 3) - a;
 		t = 2.0 * s * cos(t) - a;
-		t1 = 2.0 * s * cos(t + 2 * pi / 3)-a;
-		t2 = 2.0 * s * cos(t - 2 * pi / 3)-a;
 	}
-	return t;
+return t;
 }
 
 // end cubic solvers

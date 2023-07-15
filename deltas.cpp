@@ -297,6 +297,48 @@ double D3t2p54(double e, double M, double E)
 	return f * df / (df * df + t*f); //was  e* tn* td* f );
 }
 
+double FLM_D3(double e, double M, double E)
+{
+	double s, s2, f, d3E, d3Ed, df, ddf;
+	if (e < 0)
+	{
+		df = -e;
+		e = 1 + e;
+	}
+	else
+		df = 1 - e;
+
+	s = sin(E / 2);
+	s2 = s * s;
+#ifdef PURE
+	s = sin(E);
+#else
+	s = s * sqrt(1 - s) * sqrt(1 + s);
+	s += s;
+#endif
+	s2 += s2;
+	if ((e < 0.75) || (abs(M) > 0.275))      // only apply slower series when it will help accuracy real*8 M>0.785 approx!
+		f = M - E + e * sin(E);
+	else
+		f = FLM_Fixup(e, M, E);
+	if (f == 0.0) return f;
+	ddf = e * s;
+	df += e * s2;;
+#ifdef FAST
+	d3E = f * df;
+	if (d3E == 0) return 0;
+	d3Ed = df * df + ddf * f / 2;
+	if (d3Ed != 0) d3E =  d3E / d3Ed; else return d3E = 0; // prevent division by zero
+#else
+	{ double d2E, d3E;					// old style calculation step by step with multiple divisions
+	if (df) d2E = f / df; else d2E = 0;
+	d3E = f / (df + 0.5 * d2E * ddf);
+	}
+#endif
+	return d3E;
+}
+
+
 
 double FLM_D4(double e, double M, double E)
 {
@@ -939,7 +981,10 @@ double FLM_D5t2pM(double e, double M) //, double E)
 	d4En = f*d3Ed*d3Ed;
 //	d4Ed = df*d3Ed*d3Ed+0.5*d3En*(d3Ed*ddf+d3En*dddf/3);
 	d4Ed = df*d3Ed*d3Ed+d3En*(d3Ed*ddf+d3En*dddf/6);
-	if (d4Ed > 1e90) return M + d4En / d4Ed;
+	if (d4Ed > 1e90) 
+		return M + d4En / d4Ed;
+	else
+		if (d4Ed < 1e-100) return M + d4En / d4Ed;
 	d4E = d4Ed*d4Ed;
 	d5E += f*d4E*d4Ed/(df*d4E*d4Ed+(d4En*(ddf*d4E+d4En*(dddf*d4Ed-0.5*d4En*ddf)/6)));
 #else
@@ -1186,7 +1231,7 @@ double MTB_D7(double e, double M, double E)
 
 	if (abs(M) < 0.02)
 	{
-		t = 0.2;
+		t = 0.17255; //was 0.2
 		if (M < 0) t = -t;
 		d7E = t - E; // was - M       // adjust external E to be in valid range
 		E = t;
@@ -1278,7 +1323,8 @@ double MTB_D7t2(double e, double M, double E)
 		d7E = 0;
 		if (abs(M) < 0.005)
 		{
-			t = 1.0;
+			t = 0.51247; // was 1.0; fine tuned 26/6/23 to avoid nans
+			//t = 0.512;
 			if (M < 0) t = -t;
 			d7E = t - E;
 			E = t;
